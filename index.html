@@ -53,7 +53,7 @@
     .btn-counter { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .counter-value { font-size: 1rem; font-weight: 600; min-width: 20px; text-align: center; }
 
-    /* Inline Item Row Layout: Name -> Satisfactory -> Comment */
+    /* Inline Item Row Layout: Name -> Satisfactory Select -> Comment */
     .inline-item-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
     .inline-item-row:last-child { border-bottom: none; }
     .inline-item-name { width: 130px; font-weight: 500; font-size: 0.85rem; flex-shrink: 0; }
@@ -61,12 +61,16 @@
     .inline-item-comment { flex: 1; padding: 6px 8px; font-size: 0.85rem; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; }
     .inline-item-comment:focus { background: #fff; border-color: var(--primary-color); }
 
+    /* Canvas Signature Pad */
+    canvas { border: 1px dashed var(--secondary-text); border-radius: 8px; background: #fafafa; width: 100%; height: 110px; touch-action: none; }
+    .btn-clear { background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; float: right; margin-top: 4px; }
+
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <!-- VIEW 1: Inspection Record List -->
+  <!-- VIEW 1: Inspection Record List (Home) -->
   <div id="list-view" class="view active">
     <div class="nav-bar">
       <button class="btn-nav" id="btn-edit" onclick="toggleEditMode()">Edit</button>
@@ -78,12 +82,12 @@
     </div>
   </div>
 
-  <!-- VIEW 2: New Inspection General Info & Setup -->
+  <!-- VIEW 2: Step 1 - General Info & Room Config -->
   <div id="form-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showListView()">Cancel</button>
       <div class="title">New Inspection</div>
-      <button class="btn-nav" onclick="nextToRoomSetup()">Next</button>
+      <button class="btn-nav" onclick="goToStep2Rooms()">Next</button>
     </div>
 
     <form id="inspection-form" style="padding-top: 16px;" onsubmit="event.preventDefault();">
@@ -139,47 +143,26 @@
         <div class="counter-row"><span class="counter-label">Shed</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('shed', -1)">-</button><span class="counter-value" id="count-shed">0</span><button type="button" class="btn-counter" onclick="changeCount('shed', 1)">+</button></div></div>
       </div>
 
-      <button type="button" class="btn-action" onclick="nextToRoomSetup()">Start Room Inspection</button>
+      <button type="button" class="btn-action" onclick="goToStep2Rooms()">Next: Inspect Rooms</button>
     </form>
   </div>
 
-  <!-- VIEW 3: Room Selection & OTHERS General Checklist -->
+  <!-- VIEW 3: Step 2 - Room Selection -->
   <div id="room-list-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showFormView()">Back</button>
-      <div class="title">Inspection Checklist</div>
-      <button class="btn-nav" onclick="saveCompleteRecord()">Save Record</button>
+      <div class="title">Rooms Inspection</div>
+      <button class="btn-nav" onclick="goToStep3Others()">Next</button>
     </div>
     
     <div style="padding-top: 16px;">
-      <!-- PART 1: ROOMS -->
       <div class="section-title">Select Rooms to Inspect</div>
       <div class="record-list" id="allocated-rooms-container"></div>
-
-      <!-- PART 2: OTHERS (Mandatory Inspection List) -->
-      <div class="section-title" style="margin-top: 24px;">OTHERS (General Features)</div>
-      <div class="form-card">
-        <div class="inline-item-row"><span class="inline-item-name">Windows</span><select class="inline-item-select" data-gen="Windows-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Windows-comment" placeholder="Comment..."></div>
-        <div class="inline-item-row"><span class="inline-item-name">Exterior Doors</span><select class="inline-item-select" data-gen="Exterior Doors-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Exterior Doors-comment" placeholder="Comment..."></div>
-        <div class="inline-item-row"><span class="inline-item-name">Interior Appearances</span><select class="inline-item-select" data-gen="Interior Appearances-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Interior Appearances-comment" placeholder="Comment..."></div>
-        <div class="inline-item-row"><span class="inline-item-name">Storage Space</span><select class="inline-item-select" data-gen="Storage Space-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Storage Space-comment" placeholder="Comment..."></div>
-        <div class="inline-item-row"><span class="inline-item-name">Washer & Dryer Hook-up</span><select class="inline-item-select" data-gen="Washer & Dryer Hook-up-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Washer & Dryer Hook-up-comment" placeholder="Comment..."></div>
-        <div class="inline-item-row"><span class="inline-item-name">Hot Water Tank Location</span><select class="inline-item-select" data-gen="Hot Water Tank Location-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Hot Water Tank Location-comment" placeholder="Comment..."></div>
-        <div class="inline-item-row"><span class="inline-item-name">Screens</span><select class="inline-item-select" data-gen="Screens-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Screens-comment" placeholder="Comment..."></div>
-        <div class="inline-item-row"><span class="inline-item-name">Weather Stripping</span><select class="inline-item-select" data-gen="Weather Stripping-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Weather Stripping-comment" placeholder="Comment..."></div>
-      </div>
-
-      <!-- PART 3: OVERALL COMMENTS -->
-      <div class="section-title">OVERALL COMMENTS</div>
-      <div class="form-card">
-        <textarea id="overall-comments" rows="3" placeholder="General comments for the whole property..."></textarea>
-      </div>
-
-      <button type="button" class="btn-action" onclick="saveCompleteRecord()">Save Record</button>
+      <button type="button" class="btn-action" onclick="goToStep3Others()">Next: General 'Others' Inspection</button>
     </div>
   </div>
 
-  <!-- VIEW 4: Room Detail Inspection View -->
+  <!-- VIEW 4: Room Inspection Detail Modal/Page -->
   <div id="room-detail-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="saveAndBackToRooms()">‹ Back</button>
@@ -207,6 +190,75 @@
     </div>
   </div>
 
+  <!-- VIEW 5: Step 3 - 'OTHERS' General Checklist View -->
+  <div id="others-view" class="view">
+    <div class="nav-bar">
+      <button class="btn-nav" onclick="backToStep2Rooms()">Back</button>
+      <div class="title">Others Checklist</div>
+      <button class="btn-nav" onclick="goToStep4Signatures()">Next</button>
+    </div>
+
+    <div style="padding-top: 16px;">
+      <div class="section-title">OTHERS (General Features)</div>
+      <div class="form-card">
+        <div class="inline-item-row"><span class="inline-item-name">Windows</span><select class="inline-item-select" data-gen="Windows-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Windows-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Exterior Doors</span><select class="inline-item-select" data-gen="Exterior Doors-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Exterior Doors-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Interior Appearances</span><select class="inline-item-select" data-gen="Interior Appearances-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Interior Appearances-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Storage Space</span><select class="inline-item-select" data-gen="Storage Space-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Storage Space-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Washer & Dryer Hook-up</span><select class="inline-item-select" data-gen="Washer & Dryer Hook-up-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Washer & Dryer Hook-up-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Hot Water Tank Location</span><select class="inline-item-select" data-gen="Hot Water Tank Location-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Hot Water Tank Location-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Screens</span><select class="inline-item-select" data-gen="Screens-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Screens-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Weather Stripping</span><select class="inline-item-select" data-gen="Weather Stripping-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Weather Stripping-comment" placeholder="Comment..."></div>
+      </div>
+
+      <div class="section-title">OVERALL COMMENTS</div>
+      <div class="form-card">
+        <textarea id="overall-comments" rows="3" placeholder="General comments for the whole property..."></textarea>
+      </div>
+
+      <button type="button" class="btn-action" onclick="goToStep4Signatures()">Next: Signatures</button>
+    </div>
+  </div>
+
+  <!-- VIEW 6: Step 4 - Signatures & Complete -->
+  <div id="signatures-view" class="view">
+    <div class="nav-bar">
+      <button class="btn-nav" onclick="backToStep3Others()">Back</button>
+      <div class="title">Signatures</div>
+      <button class="btn-nav" onclick="saveCompleteRecord()">Finish</button>
+    </div>
+
+    <div style="padding-top: 16px;">
+      <!-- 包含你的最新图片需求：INSPECTED BY 与 INSPECTION DATE -->
+      <div class="section-title">Inspection Details</div>
+      <div class="form-card grid-2">
+        <div class="form-group">
+          <label>INSPECTED BY:</label>
+          <input type="text" id="inp-inspected-by" placeholder="Inspector Name">
+        </div>
+        <div class="form-group">
+          <label>INSPECTION DATE:</label>
+          <input type="date" id="inp-inspection-date">
+        </div>
+      </div>
+
+      <!-- 包含 LANDLORD SIGNATURE 与 TENANT SIGNATURE 对应手写签名 -->
+      <div class="section-title">LANDLORD SIGNATURE</div>
+      <div class="form-card">
+        <canvas id="canvas-landlord"></canvas>
+        <button type="button" class="btn-clear" onclick="clearCanvas('canvas-landlord')">Clear</button>
+      </div>
+
+      <div class="section-title">TENANT SIGNATURE</div>
+      <div class="form-card">
+        <canvas id="canvas-tenant"></canvas>
+        <button type="button" class="btn-clear" onclick="clearCanvas('canvas-tenant')">Clear</button>
+      </div>
+
+      <button type="button" class="btn-action" onclick="saveCompleteRecord()">Finish & Save Record</button>
+    </div>
+  </div>
+
 <script>
   let isEditMode = false;
   let roomCounts = { kitchen: 1, dining: 1, bedroom: 2, bath: 1, living: 1, hallway: 1, basement: 0, stairs: 0, garage: 0, shed: 0 };
@@ -214,6 +266,7 @@
   let currentInspectingRoomIdx = null;
 
   document.getElementById('inp-date').valueAsDate = new Date();
+  document.getElementById('inp-inspection-date').valueAsDate = new Date();
 
   const roomCategorySchemas = {
     kitchen: ["Cupboards", "Fixtures", "Switches/Plugs", "Range Plug", "Range Hood", "Appliances Inc."],
@@ -267,7 +320,8 @@
     renderList();
   }
 
-  function nextToRoomSetup() {
+  // Step 1 -> Step 2
+  function goToStep2Rooms() {
     const address = document.getElementById('inp-address').value;
     if (!address) { alert('Please fill in the Address / Title.'); return; }
 
@@ -374,10 +428,7 @@
         const statusEl = document.querySelector(`select[data-other-key="${key}"][data-type="status"]`);
         const commentEl = document.querySelector(`input[data-other-key="${key}"][data-type="comment"]`);
         if (statusEl && commentEl) {
-          room.details.others[key] = {
-            status: statusEl.value,
-            comment: commentEl.value
-          };
+          room.details.others[key] = { status: statusEl.value, comment: commentEl.value };
         }
       });
 
@@ -387,6 +438,32 @@
     renderRoomSelection();
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('room-list-view').classList.add('active');
+  }
+
+  // Step 2 -> Step 3
+  function goToStep3Others() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('others-view').classList.add('active');
+  }
+
+  function backToStep2Rooms() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('room-list-view').classList.add('active');
+  }
+
+  // Step 3 -> Step 4
+  function goToStep4Signatures() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('signatures-view').classList.add('active');
+    setTimeout(() => {
+      initCanvas('canvas-landlord');
+      initCanvas('canvas-tenant');
+    }, 100);
+  }
+
+  function backToStep3Others() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('others-view').classList.add('active');
   }
 
   function saveCompleteRecord() {
@@ -421,7 +498,9 @@
       heating: document.getElementById('inp-heating').value,
       rooms: currentConfiguredRooms,
       generalOthers: generalOthersData,
-      overallComments: document.getElementById('overall-comments').value
+      overallComments: document.getElementById('overall-comments').value,
+      inspectedBy: document.getElementById('inp-inspected-by').value,
+      inspectionDate: document.getElementById('inp-inspection-date').value
     };
 
     const records = getRecords();
@@ -450,7 +529,32 @@
     if (isEditMode) return;
     const records = getRecords();
     const item = records[index];
-    alert(`Inspection Details:\nAddress: ${item.address}\nRooms Inspected: ${item.rooms ? item.rooms.length : 0}`);
+    alert(`Inspection Details:\nAddress: ${item.address}\nInspected By: ${item.inspectedBy || 'N/A'}`);
+  }
+
+  function initCanvas(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    let drawing = false;
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.onmousedown = canvas.ontouchstart = (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
+    canvas.onmousemove = canvas.ontouchmove = (e) => { if (drawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); } };
+    canvas.onmouseup = canvas.ontouchend = () => { drawing = false; };
+  }
+
+  function clearCanvas(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   renderList();
