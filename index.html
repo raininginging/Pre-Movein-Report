@@ -12,22 +12,21 @@
       --border-color: #e5e5ea;
       --text-color: #000000;
       --secondary-text: #8e8e93;
-      --success-color: #34c759;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
     body { background-color: var(--bg-color); color: var(--text-color); }
     
-    /* 顶部导航 */
+    /* Navigation Bar */
     .nav-bar { position: sticky; top: 0; background: #f9f9f9; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; z-index: 100; }
     .nav-bar .btn-nav { color: var(--primary-color); font-size: 1rem; background: none; border: none; cursor: pointer; font-weight: 500; }
     .nav-bar .title { font-weight: 600; font-size: 1.1rem; }
     .nav-bar .btn-add { font-size: 1.5rem; line-height: 1; }
 
-    /* 视图控制 */
+    /* Views */
     .view { display: none; padding: 16px; }
     .view.active { display: block; }
 
-    /* 列表卡片 */
+    /* Record List */
     .record-list { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); }
     .record-item { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
     .record-item:last-child { border-bottom: none; }
@@ -35,20 +34,21 @@
     .record-subtitle { font-size: 0.85rem; color: var(--secondary-text); }
     .empty-state { text-align: center; color: var(--secondary-text); padding: 40px 20px; font-size: 0.95rem; }
 
-    /* 表单与卡片样式 */
+    /* Form Styles */
     .form-card { background: var(--card-bg); border-radius: 10px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-color); }
     .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #3a3a3c; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.8rem; color: #3a3a3c; text-transform: uppercase; }
     .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; background: #fff; }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .section-title { font-weight: 700; font-size: 0.9rem; color: var(--secondary-text); text-transform: uppercase; margin: 16px 0 8px 4px; }
+    .section-title { font-weight: 700; font-size: 0.85rem; color: var(--secondary-text); text-transform: uppercase; margin: 16px 0 8px 4px; }
     
-    /* 计数器样式（用于卧室、厨房等数量选择） */
-    .counter-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    /* Counter Styles */
+    .counter-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
     .counter-row:last-child { border-bottom: none; }
+    .counter-label { font-size: 0.95rem; font-weight: 500; }
     .counter-controls { display: flex; align-items: center; gap: 12px; }
-    .btn-counter { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+    .btn-counter { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .counter-value { font-size: 1rem; font-weight: 600; min-width: 20px; text-align: center; }
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
@@ -56,7 +56,7 @@
 </head>
 <body>
 
-  <!-- 视图 1：首页记录列表页 -->
+  <!-- VIEW 1: Inspection Record List -->
   <div id="list-view" class="view active">
     <div class="nav-bar">
       <button class="btn-nav" id="btn-edit" onclick="toggleEditMode()">Edit</button>
@@ -68,7 +68,7 @@
     </div>
   </div>
 
-  <!-- 视图 2：新建 Record（基础信息 + 房型规划） -->
+  <!-- VIEW 2: New Inspection Form -->
   <div id="form-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showListView()">Cancel</button>
@@ -77,7 +77,8 @@
     </div>
 
     <form id="inspection-form" style="padding-top: 16px;" onsubmit="event.preventDefault();">
-      <!-- 基础信息卡片（对应你的截图） -->
+      <!-- General Building Information -->
+      <div class="section-title">General Information</div>
       <div class="form-card">
         <div class="form-group">
           <label>ADDRESS / TITLE</label>
@@ -103,13 +104,54 @@
             <input type="text" id="inp-tenant">
           </div>
         </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>AGE</label>
+            <input type="text" id="inp-age" placeholder="e.g. 10 years">
+          </div>
+          <div class="form-group">
+            <label>TOTAL NO. OF UNITS</label>
+            <input type="number" id="inp-units">
+          </div>
+        </div>
       </div>
 
-      <!-- 房型规划卡片 (Room Configuration) -->
+      <!-- Building Condition Overview -->
+      <div class="section-title">Building Condition</div>
+      <div class="form-card">
+        <div class="grid-2">
+          <div class="form-group">
+            <label>APPEARANCE</label>
+            <input type="text" id="inp-appearance">
+          </div>
+          <div class="form-group">
+            <label>FOUNDATION</label>
+            <input type="text" id="inp-foundation">
+          </div>
+          <div class="form-group">
+            <label>ROOF</label>
+            <input type="text" id="inp-roof">
+          </div>
+          <div class="form-group">
+            <label>WALLS</label>
+            <input type="text" id="inp-walls">
+          </div>
+          <div class="form-group">
+            <label>PARKING FACILITIES</label>
+            <input type="text" id="inp-parking">
+          </div>
+          <div class="form-group">
+            <label>HEATING SYSTEM</label>
+            <input type="text" id="inp-heating">
+          </div>
+        </div>
+      </div>
+
+      <!-- Configure Property Rooms -->
       <div class="section-title">Configure Property Rooms</div>
       <div class="form-card">
         <div class="counter-row">
-          <span>Kitchens (厨房)</span>
+          <span class="counter-label">Kitchen</span>
           <div class="counter-controls">
             <button type="button" class="btn-counter" onclick="changeCount('kitchen', -1)">-</button>
             <span class="counter-value" id="count-kitchen">1</span>
@@ -118,7 +160,16 @@
         </div>
 
         <div class="counter-row">
-          <span>Bedrooms (卧室)</span>
+          <span class="counter-label">Dining Room</span>
+          <div class="counter-controls">
+            <button type="button" class="btn-counter" onclick="changeCount('dining', -1)">-</button>
+            <span class="counter-value" id="count-dining">1</span>
+            <button type="button" class="btn-counter" onclick="changeCount('dining', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="counter-row">
+          <span class="counter-label">Bedroom</span>
           <div class="counter-controls">
             <button type="button" class="btn-counter" onclick="changeCount('bedroom', -1)">-</button>
             <span class="counter-value" id="count-bedroom">2</span>
@@ -127,7 +178,7 @@
         </div>
 
         <div class="counter-row">
-          <span>Bathrooms (浴室)</span>
+          <span class="counter-label">Bathroom</span>
           <div class="counter-controls">
             <button type="button" class="btn-counter" onclick="changeCount('bath', -1)">-</button>
             <span class="counter-value" id="count-bath">1</span>
@@ -136,7 +187,7 @@
         </div>
 
         <div class="counter-row">
-          <span>Living Rooms (客厅)</span>
+          <span class="counter-label">Living Room</span>
           <div class="counter-controls">
             <button type="button" class="btn-counter" onclick="changeCount('living', -1)">-</button>
             <span class="counter-value" id="count-living">1</span>
@@ -145,20 +196,56 @@
         </div>
 
         <div class="counter-row">
-          <span>Hallways / Corridors (走廊)</span>
+          <span class="counter-label">Hallway / Corridor</span>
           <div class="counter-controls">
             <button type="button" class="btn-counter" onclick="changeCount('hallway', -1)">-</button>
             <span class="counter-value" id="count-hallway">1</span>
             <button type="button" class="btn-counter" onclick="changeCount('hallway', 1)">+</button>
           </div>
         </div>
+
+        <div class="counter-row">
+          <span class="counter-label">Basement</span>
+          <div class="counter-controls">
+            <button type="button" class="btn-counter" onclick="changeCount('basement', -1)">-</button>
+            <span class="counter-value" id="count-basement">0</span>
+            <button type="button" class="btn-counter" onclick="changeCount('basement', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="counter-row">
+          <span class="counter-label">Stairs</span>
+          <div class="counter-controls">
+            <button type="button" class="btn-counter" onclick="changeCount('stairs', -1)">-</button>
+            <span class="counter-value" id="count-stairs">0</span>
+            <button type="button" class="btn-counter" onclick="changeCount('stairs', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="counter-row">
+          <span class="counter-label">Garage</span>
+          <div class="counter-controls">
+            <button type="button" class="btn-counter" onclick="changeCount('garage', -1)">-</button>
+            <span class="counter-value" id="count-garage">0</span>
+            <button type="button" class="btn-counter" onclick="changeCount('garage', 1)">+</button>
+          </div>
+        </div>
+
+        <div class="counter-row">
+          <span class="counter-label">Shed</span>
+          <div class="counter-controls">
+            <button type="button" class="btn-counter" onclick="changeCount('shed', -1)">-</button>
+            <span class="counter-value" id="count-shed">0</span>
+            <button type="button" class="btn-counter" onclick="changeCount('shed', 1)">+</button>
+          </div>
+        </div>
       </div>
 
-      <button type="button" class="btn-action" onclick="nextToRoomSetup()">Start Inspection (选择房间检查)</button>
+      <button type="button" class="btn-action" onclick="nextToRoomSetup()">Start Room Inspection</button>
     </form>
   </div>
 
-  <!-- 视图 3：房间列表（根据生成的房间进入检查） -->
+  <!-- VIEW 3: Allocated Room Selection -->
   <div id="room-list-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showFormView()">Back</button>
@@ -174,10 +261,20 @@
 
 <script>
   let isEditMode = false;
-  let roomCounts = { kitchen: 1, bedroom: 2, bath: 1, living: 1, hallway: 1 };
+  let roomCounts = { 
+    kitchen: 1, 
+    dining: 1, 
+    bedroom: 2, 
+    bath: 1, 
+    living: 1, 
+    hallway: 1, 
+    basement: 0, 
+    stairs: 0, 
+    garage: 0, 
+    shed: 0 
+  };
   let currentConfiguredRooms = [];
 
-  // 初始化日期为今天
   document.getElementById('inp-date').valueAsDate = new Date();
 
   function getRecords() {
@@ -235,14 +332,30 @@
       return;
     }
 
-    // 生成房间列表数组
     currentConfiguredRooms = [];
     
-    for (let i = 1; i <= roomCounts.kitchen; i++) currentConfiguredRooms.push({ name: `Kitchen ${roomCounts.kitchen > 1 ? i : ''}`.trim(), status: 'Pending' });
-    for (let i = 1; i <= roomCounts.bedroom; i++) currentConfiguredRooms.push({ name: `Bedroom ${i}`, status: 'Pending' });
-    for (let i = 1; i <= roomCounts.bath; i++) currentConfiguredRooms.push({ name: `Bathroom ${i}`, status: 'Pending' });
-    for (let i = 1; i <= roomCounts.living; i++) currentConfiguredRooms.push({ name: `Living Room ${roomCounts.living > 1 ? i : ''}`.trim(), status: 'Pending' });
-    for (let i = 1; i <= roomCounts.hallway; i++) currentConfiguredRooms.push({ name: `Hallway ${roomCounts.hallway > 1 ? i : ''}`.trim(), status: 'Pending' });
+    const categories = [
+      { key: 'kitchen', label: 'Kitchen' },
+      { key: 'dining', label: 'Dining Room' },
+      { key: 'bedroom', label: 'Bedroom' },
+      { key: 'bath', label: 'Bathroom' },
+      { key: 'living', label: 'Living Room' },
+      { key: 'hallway', label: 'Hallway' },
+      { key: 'basement', label: 'Basement' },
+      { key: 'stairs', label: 'Stairs' },
+      { key: 'garage', label: 'Garage' },
+      { key: 'shed', label: 'Shed' }
+    ];
+
+    categories.forEach(cat => {
+      const count = roomCounts[cat.key];
+      for (let i = 1; i <= count; i++) {
+        currentConfiguredRooms.push({
+          name: count > 1 ? `${cat.label} ${i}` : cat.label,
+          status: 'Pending'
+        });
+      }
+    });
 
     renderRoomSelection();
     document.getElementById('form-view').classList.remove('active');
@@ -263,7 +376,7 @@
   }
 
   function inspectRoom(index) {
-    alert(`准备开始检查：${currentConfiguredRooms[index].name}\n（下一步我们将编写该房间的具体检查细项页面）`);
+    alert(`Starting inspection for: ${currentConfiguredRooms[index].name}`);
   }
 
   function saveCompleteRecord() {
@@ -278,6 +391,14 @@
       date: date,
       landlord: document.getElementById('inp-landlord').value,
       tenant: document.getElementById('inp-tenant').value,
+      age: document.getElementById('inp-age').value,
+      units: document.getElementById('inp-units').value,
+      appearance: document.getElementById('inp-appearance').value,
+      foundation: document.getElementById('inp-foundation').value,
+      roof: document.getElementById('inp-roof').value,
+      walls: document.getElementById('inp-walls').value,
+      parking: document.getElementById('inp-parking').value,
+      heating: document.getElementById('inp-heating').value,
       rooms: currentConfiguredRooms
     };
 
@@ -307,7 +428,7 @@
     if (isEditMode) return;
     const records = getRecords();
     const item = records[index];
-    alert(`Viewing Record: ${item.address}\nIncluded Rooms: ${item.rooms ? item.rooms.map(r => r.name).join(', ') : 'None'}`);
+    alert(`Viewing Record: ${item.address}\nRooms: ${item.rooms ? item.rooms.map(r => r.name).join(', ') : 'None'}`);
   }
 
   renderList();
