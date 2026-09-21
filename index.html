@@ -3,183 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rent Supplement Pre Move-in Inspection Report</title>
+  <title>Inspection Record</title>
   <style>
     :root {
-      --primary-color: #0056b3;
-      --bg-color: #f4f7f6;
+      --primary-color: #007aff;
+      --bg-color: #f2f2f7;
       --card-bg: #ffffff;
-      --border-color: #ccc;
-      --text-color: #333;
+      --border-color: #e5e5ea;
+      --text-color: #000000;
+      --secondary-text: #8e8e93;
     }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; }
-    .container { max-width: 800px; margin: 0 auto; background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    h1 { text-align: center; color: var(--primary-color); font-size: 1.4rem; margin-bottom: 5px; }
-    h2 { text-align: center; font-size: 1.1rem; color: #555; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+    body { background-color: var(--bg-color); color: var(--text-color); }
+    
+    /* 顶部导航 */
+    .nav-bar { position: sticky; top: 0; background: #f9f9f9; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; z-index: 100; }
+    .nav-bar .btn-nav { color: var(--primary-color); font-size: 1rem; background: none; border: none; cursor: pointer; font-weight: 500; }
+    .nav-bar .title { font-weight: 600; font-size: 1.1rem; }
+    .nav-bar .btn-add { font-size: 1.5rem; line-height: 1; }
+
+    /* 视图切换 */
+    .view { display: none; padding: 16px; }
+    .view.active { display: block; }
+
+    /* 首页列表 */
+    .record-list { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); }
+    .record-item { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .record-item:last-child { border-bottom: none; }
+    .record-title { font-size: 1rem; font-weight: 500; margin-bottom: 4px; color: #1c1c1e; }
+    .record-subtitle { font-size: 0.85rem; color: var(--secondary-text); }
+    .empty-state { text-align: center; color: var(--secondary-text); padding: 40px 20px; font-size: 0.95rem; }
+
+    /* 表单与卡片样式 */
+    .form-card { background: var(--card-bg); border-radius: 10px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-color); }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #3a3a3c; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; background: #fff; }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-weight: bold; margin-bottom: 4px; font-size: 0.85rem; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1fr solid var(--border-color); border-radius: 5px; border: 1px solid #ccc; font-size: 0.95rem; }
+    .section-title { font-weight: 700; font-size: 0.9rem; color: var(--secondary-text); text-transform: uppercase; margin: 16px 0 8px 4px; }
     
-    .section-title { background: #e9ecef; padding: 8px 12px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; border-left: 4px solid var(--primary-color); font-size: 1rem; }
+    .check-table { width: 100%; border-collapse: collapse; }
+    .check-table td { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    .check-table td:last-child { width: 120px; }
+
+    canvas { border: 1px dashed var(--secondary-text); border-radius: 8px; background: #fafafa; width: 100%; height: 100px; touch-action: none; }
+    .btn-clear { background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; float: right; margin-top: 4px; }
     
-    .check-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    .check-table th, .check-table td { border: 1px solid #eee; padding: 8px; text-align: left; font-size: 0.9rem; }
-    .check-table th { background-color: #f8f9fa; }
-    .check-options { display: flex; gap: 10px; }
-    .check-options label { font-weight: normal; cursor: pointer; }
-    
-    canvas { border: 1px dashed #999; border-radius: 5px; background: #fafafa; width: 100%; height: 120px; touch-action: none; }
-    .btn-clear { background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; font-size: 0.75rem; cursor: pointer; float: right; margin-top: 4px; }
-    
-    .actions { text-align: center; margin-top: 30px; }
-    .btn-submit { background-color: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; max-width: 300px; }
-    
+    .btn-save { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
+
     @media print {
-      body { background: white; padding: 0; }
-      .container { box-shadow: none; border-radius: 0; padding: 0; }
-      .btn-clear, .actions { display: none; }
-      input, textarea { border: none !important; border-bottom: 1px solid #000 !important; border-radius: 0; }
-      .section-title { background: #eee !important; -webkit-print-color-adjust: exact; }
+      .nav-bar, .btn-save, .btn-clear { display: none !important; }
+      .view { display: block !important; padding: 0; }
+      #list-view { display: none !important; }
+      body { background: white; }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>RENT SUPPLEMENT</h1>
-  <h2>PRE MOVE IN LANDLORD INSPECTION REPORT</h2>
-
-  <!-- 基本信息 -->
-  <div class="grid-2">
-    <div class="form-group"><label>RENT START DATE:</label><input type="date"></div>
-    <div class="form-group"><label>ADDRESS:</label><input type="text"></div>
-    <div class="form-group"><label>LANDLORD:</label><input type="text"></div>
-    <div class="form-group"><label>APT. NO.:</label><input type="text"></div>
-    <div class="form-group"><label>PROJECT NO.:</label><input type="text"></div>
-    <div class="form-group"><label>TENANT:</label><input type="text"></div>
-    <div class="form-group"><label>TOTAL NO. OF UNITS:</label><input type="number"></div>
-    <div class="form-group"><label>INSPECTED BY:</label><input type="text"></div>
-  </div>
-
-  <!-- 概况结构评估 -->
-  <div class="section-title">GENERAL BUILDING CONDITION</div>
-  <table class="check-table">
-    <thead>
-      <tr><th>ITEM</th><th>STATUS</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Appearance</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
-      <tr><td>Foundation</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
-      <tr><td>Roof</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
-      <tr><td>Walls</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
-      <tr><td>Parking Facilities</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
-      <tr><td>Heating System</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
-    </tbody>
-  </table>
-
-  <!-- 厨房检查 -->
-  <div class="section-title">KITCHEN</div>
-  <table class="check-table">
-    <thead>
-      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Floors</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Walls</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Ceilings</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Cupboards</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Fixtures</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Switches/Plugs</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Range Plug / Hood</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Appliances Inc.</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-    </tbody>
-  </table>
-
-  <!-- 浴室检查 -->
-  <div class="section-title">BATHROOM</div>
-  <table class="check-table">
-    <thead>
-      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Floors / Walls / Ceilings</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Showerhead / Rod</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Exhaust Fan / Fixtures</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-    </tbody>
-  </table>
-
-  <!-- 客厅与房间检查 -->
-  <div class="section-title">LIVING ROOM & OTHER ROOMS</div>
-  <table class="check-table">
-    <thead>
-      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Floors / Walls / Ceilings</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Light Fixtures / Switches / Plugs</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Closets</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-    </tbody>
-  </table>
-
-  <!-- 其他设施 -->
-  <div class="section-title">OTHER ITEMS</div>
-  <table class="check-table">
-    <thead>
-      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Windows & Screens</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Exterior / Interior Doors</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Storage Space</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Washer & Dryer Hook-up</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Hot Water Tank Location</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-      <tr><td>Weather Stripping</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
-    </tbody>
-  </table>
-
-  <!-- 总结评语 -->
-  <div class="form-group" style="margin-top: 15px;">
-    <label>GENERAL COMMENTS:</label>
-    <textarea rows="3"></textarea>
-  </div>
-
-  <!-- 签名区域 -->
-  <div class="section-title">SIGNATURES</div>
-  <div class="grid-2">
-    <div>
-      <label>LANDLORD SIGNATURE:</label>
-      <canvas id="landlord-sig"></canvas>
-      <button class="btn-clear" onclick="clearCanvas('landlord-sig')">Clear</button>
+  <!-- 视图 1：首页列表页 -->
+  <div id="list-view" class="view active">
+    <div class="nav-bar">
+      <button class="btn-nav" id="btn-edit" onclick="toggleEditMode()">Edit</button>
+      <div class="title">Inspection Record</div>
+      <button class="btn-nav btn-add" onclick="showFormView()">+</button>
     </div>
-    <div>
-      <label>TENANT SIGNATURE:</label>
-      <canvas id="tenant-sig"></canvas>
-      <button class="btn-clear" onclick="clearCanvas('tenant-sig')">Clear</button>
+    <div style="padding-top: 16px;">
+      <div class="record-list" id="records-container"></div>
     </div>
   </div>
 
-  <div class="form-group" style="margin-top: 15px;">
-    <label>INSPECTION DATE:</label>
-    <input type="date">
-  </div>
+  <!-- 视图 2：新增/编辑表格页 -->
+  <div id="form-view" class="view">
+    <div class="nav-bar">
+      <button class="btn-nav" onclick="showListView()"> Cancel</button>
+      <div class="title">New Inspection</div>
+      <button class="btn-nav" onclick="saveInspection()">Save</button>
+    </div>
 
-  <div class="actions">
-    <button class="btn-submit" onclick="window.print()">Export / Print PDF</button>
+    <form id="inspection-form" style="padding-top: 16px;">
+      <div class="form-card">
+        <div class="form-group">
+          <label>ADDRESS / TITLE</label>
+          <input type="text" id="inp-address" placeholder="e.g. 33 Wilson Row-Fredericton" required>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>PROJECT NO. / ID</label>
+            <input type="text" id="inp-project" placeholder="e.g. P020-299938">
+          </div>
+          <div class="form-group">
+            <label>START DATE</label>
+            <input type="date" id="inp-date" required>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>LANDLORD</label>
+            <input type="text" id="inp-landlord">
+          </div>
+          <div class="form-group">
+            <label>TENANT</label>
+            <input type="text" id="inp-tenant">
+          </div>
+        </div>
+      </div>
+
+      <!-- 检查项区块 -->
+      <div class="section-title">Areas & Items</div>
+      <div class="form-card">
+        <table class="check-table">
+          <tr><td>Kitchen</td><td><select id="status-kitchen"><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+          <tr><td>Bathroom</td><td><select id="status-bath"><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+          <tr><td>Living Room</td><td><select id="status-living"><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+          <tr><td>Heating System</td><td><select id="status-heating"><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+        </table>
+      </div>
+
+      <div class="form-card">
+        <div class="form-group">
+          <label>COMMENTS</label>
+          <textarea id="inp-comments" rows="3"></textarea>
+        </div>
+      </div>
+
+      <!-- 签名区块 -->
+      <div class="section-title">Signatures</div>
+      <div class="form-card grid-2">
+        <div>
+          <label>Landlord Signature</label>
+          <canvas id="canvas-landlord"></canvas>
+          <button type="button" class="btn-clear" onclick="clearCanvas('canvas-landlord')">Clear</button>
+        </div>
+        <div>
+          <label>Tenant Signature</label>
+          <canvas id="canvas-tenant"></canvas>
+          <button type="button" class="btn-clear" onclick="clearCanvas('canvas-tenant')">Clear</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-save" onclick="saveInspection()">Save Inspection</button>
+    </form>
   </div>
-</div>
 
 <script>
-  function setupCanvas(id) {
+  let isEditMode = false;
+
+  // 默认日期初始化为今天
+  document.getElementById('inp-date').valueAsDate = new Date();
+
+  function getRecords() {
+    return JSON.parse(localStorage.getItem('inspection_records') || '[]');
+  }
+
+  function saveRecords(records) {
+    localStorage.setItem('inspection_records', JSON.stringify(records));
+  }
+
+  function renderList() {
+    const records = getRecords();
+    const container = document.getElementById('records-container');
+    
+    if (records.length === 0) {
+      container.innerHTML = '<div class="empty-state">No inspection records yet.<br>Tap + to create one.</div>';
+      return;
+    }
+
+    // 按时间/创建顺序倒序
+    container.innerHTML = records.map((item, index) => `
+      <div class="record-item" onclick="onItemClick(${index})">
+        <div>
+          <div class="record-title">${item.address || 'Untitled Inspection'}</div>
+          <div class="record-subtitle">${item.date} ${item.project ? '· ' + item.project : ''}</div>
+        </div>
+        ${isEditMode ? `<button style="color:red;border:none;background:none;" onclick="deleteRecord(event, ${index})">Delete</button>` : '<span style="color:#c7c7cc;">›</span>'}
+      </div>
+    `).join('');
+  }
+
+  function showFormView() {
+    document.getElementById('list-view').classList.remove('active');
+    document.getElementById('form-view').classList.add('active');
+    setTimeout(() => {
+      initCanvas('canvas-landlord');
+      initCanvas('canvas-tenant');
+    }, 100);
+  }
+
+  function showListView() {
+    document.getElementById('form-view').classList.remove('active');
+    document.getElementById('list-view').classList.add('active');
+    renderList();
+  }
+
+  function toggleEditMode() {
+    isEditMode = !isEditMode;
+    document.getElementById('btn-edit').innerText = isEditMode ? 'Done' : 'Edit';
+    renderList();
+  }
+
+  function deleteRecord(event, index) {
+    event.stopPropagation();
+    let records = getRecords();
+    records.splice(index, 1);
+    saveRecords(records);
+    renderList();
+  }
+
+  function saveInspection() {
+    const address = document.getElementById('inp-address').value;
+    const date = document.getElementById('inp-date').value;
+    const project = document.getElementById('inp-project').value;
+    
+    if (!address) {
+      alert('Please fill in the Address/Title.');
+      return;
+    }
+
+    const newRecord = {
+      id: Date.now(),
+      address: address,
+      project: project,
+      date: date,
+      landlord: document.getElementById('inp-landlord').value,
+      tenant: document.getElementById('inp-tenant').value,
+      comments: document.getElementById('inp-comments').value
+    };
+
+    const records = getRecords();
+    records.unshift(newRecord); // 插入最前面
+    saveRecords(records);
+
+    // 重置表单并返回列表
+    document.getElementById('inspection-form').reset();
+    document.getElementById('inp-date').valueAsDate = new Date();
+    showListView();
+  }
+
+  function onItemClick(index) {
+    if (isEditMode) return;
+    const records = getRecords();
+    const item = records[index];
+    alert(`Viewing Record:\nAddress: ${item.address}\nDate: ${item.date}\nProject: ${item.project}`);
+  }
+
+  // 签名 Canvas 初始化逻辑
+  function initCanvas(id) {
     const canvas = document.getElementById(id);
     const ctx = canvas.getContext('2d');
-    let drawing = false;
-
-    // Adjust scale for high-DPI displays
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
+    let drawing = false;
 
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
@@ -188,20 +263,9 @@
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
-    function startDraw(e) { drawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); }
-    function draw(e) { if (!drawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault(); }
-    function stopDraw() { drawing = false; }
-
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#000';
-
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDraw);
-
-    canvas.addEventListener('touchstart', startDraw);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDraw);
+    canvas.onmousedown = canvas.ontouchstart = (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
+    canvas.onmousemove = canvas.ontouchmove = (e) => { if (drawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); } };
+    canvas.onmouseup = canvas.ontouchend = () => { drawing = false; };
   }
 
   function clearCanvas(id) {
@@ -210,10 +274,8 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  window.onload = function() {
-    setupCanvas('landlord-sig');
-    setupCanvas('tenant-sig');
-  };
+  // 初始化渲染
+  renderList();
 </script>
 </body>
 </html>
