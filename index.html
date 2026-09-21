@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rent Supplement Pre Move-in Inspection Report</title>
+  <style>
+    :root {
+      --primary-color: #0056b3;
+      --bg-color: #f4f7f6;
+      --card-bg: #ffffff;
+      --border-color: #ccc;
+      --text-color: #333;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 15px; }
+    .container { max-width: 800px; margin: 0 auto; background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: var(--primary-color); font-size: 1.4rem; margin-bottom: 5px; }
+    h2 { text-align: center; font-size: 1.1rem; color: #555; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 4px; font-size: 0.85rem; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1fr solid var(--border-color); border-radius: 5px; border: 1px solid #ccc; font-size: 0.95rem; }
+    
+    .section-title { background: #e9ecef; padding: 8px 12px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; border-left: 4px solid var(--primary-color); font-size: 1rem; }
+    
+    .check-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    .check-table th, .check-table td { border: 1px solid #eee; padding: 8px; text-align: left; font-size: 0.9rem; }
+    .check-table th { background-color: #f8f9fa; }
+    .check-options { display: flex; gap: 10px; }
+    .check-options label { font-weight: normal; cursor: pointer; }
+    
+    canvas { border: 1px dashed #999; border-radius: 5px; background: #fafafa; width: 100%; height: 120px; touch-action: none; }
+    .btn-clear { background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; font-size: 0.75rem; cursor: pointer; float: right; margin-top: 4px; }
+    
+    .actions { text-align: center; margin-top: 30px; }
+    .btn-submit { background-color: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 25px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; max-width: 300px; }
+    
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; border-radius: 0; padding: 0; }
+      .btn-clear, .actions { display: none; }
+      input, textarea { border: none !important; border-bottom: 1px solid #000 !important; border-radius: 0; }
+      .section-title { background: #eee !important; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>RENT SUPPLEMENT</h1>
+  <h2>PRE MOVE IN LANDLORD INSPECTION REPORT</h2>
+
+  <!-- 基本信息 -->
+  <div class="grid-2">
+    <div class="form-group"><label>RENT START DATE:</label><input type="date"></div>
+    <div class="form-group"><label>ADDRESS:</label><input type="text"></div>
+    <div class="form-group"><label>LANDLORD:</label><input type="text"></div>
+    <div class="form-group"><label>APT. NO.:</label><input type="text"></div>
+    <div class="form-group"><label>PROJECT NO.:</label><input type="text"></div>
+    <div class="form-group"><label>TENANT:</label><input type="text"></div>
+    <div class="form-group"><label>TOTAL NO. OF UNITS:</label><input type="number"></div>
+    <div class="form-group"><label>INSPECTED BY:</label><input type="text"></div>
+  </div>
+
+  <!-- 概况结构评估 -->
+  <div class="section-title">GENERAL BUILDING CONDITION</div>
+  <table class="check-table">
+    <thead>
+      <tr><th>ITEM</th><th>STATUS</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Appearance</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+      <tr><td>Foundation</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+      <tr><td>Roof</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+      <tr><td>Walls</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+      <tr><td>Parking Facilities</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+      <tr><td>Heating System</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 厨房检查 -->
+  <div class="section-title">KITCHEN</div>
+  <table class="check-table">
+    <thead>
+      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Floors</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Walls</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Ceilings</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Cupboards</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Fixtures</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Switches/Plugs</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Range Plug / Hood</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Appliances Inc.</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 浴室检查 -->
+  <div class="section-title">BATHROOM</div>
+  <table class="check-table">
+    <thead>
+      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Floors / Walls / Ceilings</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Showerhead / Rod</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Exhaust Fan / Fixtures</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 客厅与房间检查 -->
+  <div class="section-title">LIVING ROOM & OTHER ROOMS</div>
+  <table class="check-table">
+    <thead>
+      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Floors / Walls / Ceilings</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Light Fixtures / Switches / Plugs</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Closets</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 其他设施 -->
+  <div class="section-title">OTHER ITEMS</div>
+  <table class="check-table">
+    <thead>
+      <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Windows & Screens</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Exterior / Interior Doors</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Storage Space</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Washer & Dryer Hook-up</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Hot Water Tank Location</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+      <tr><td>Weather Stripping</td><td><select><option>Satisfactory</option><option>Unsatisfactory</option></select></td><td><input type="text"></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 总结评语 -->
+  <div class="form-group" style="margin-top: 15px;">
+    <label>GENERAL COMMENTS:</label>
+    <textarea rows="3"></textarea>
+  </div>
+
+  <!-- 签名区域 -->
+  <div class="section-title">SIGNATURES</div>
+  <div class="grid-2">
+    <div>
+      <label>LANDLORD SIGNATURE:</label>
+      <canvas id="landlord-sig"></canvas>
+      <button class="btn-clear" onclick="clearCanvas('landlord-sig')">Clear</button>
+    </div>
+    <div>
+      <label>TENANT SIGNATURE:</label>
+      <canvas id="tenant-sig"></canvas>
+      <button class="btn-clear" onclick="clearCanvas('tenant-sig')">Clear</button>
+    </div>
+  </div>
+
+  <div class="form-group" style="margin-top: 15px;">
+    <label>INSPECTION DATE:</label>
+    <input type="date">
+  </div>
+
+  <div class="actions">
+    <button class="btn-submit" onclick="window.print()">Export / Print PDF</button>
+  </div>
+</div>
+
+<script>
+  function setupCanvas(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    // Adjust scale for high-DPI displays
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startDraw(e) { drawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); }
+    function draw(e) { if (!drawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault(); }
+    function stopDraw() { drawing = false; }
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#000';
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDraw);
+  }
+
+  function clearCanvas(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.onload = function() {
+    setupCanvas('landlord-sig');
+    setupCanvas('tenant-sig');
+  };
+</script>
+</body>
+</html>
