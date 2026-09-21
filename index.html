@@ -67,26 +67,24 @@
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
 
-    /* ---------------- PRINT / PDF TEMPLATE STYLING (OPTIMIZED) ---------------- */
-    #print-template { display: none; background: white; padding: 20px; color: #000; font-family: "Times New Roman", Times, serif; font-size: 12px; }
-    .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 12px; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 4px; }
+    /* ---------------- UNDERLINE / NO-BORDER PRINT STYLING ---------------- */
+    #print-template { display: none; background: white; padding: 25px; color: #000; font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; line-height: 1.5; }
+    .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    /* 1. Header Info Table with expanded Address column */
-    .pdf-info-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    .pdf-info-table td { border: 1px solid #000; padding: 4px 6px; font-size: 11px; }
-    .pdf-info-col-left { width: 35%; }
-    .pdf-info-col-right { width: 65%; }
+    .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 15px; }
+    .pdf-underline { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; min-width: 120px; word-break: break-all; }
+    .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
 
-    /* 2. Item Checklist Table with optimized widths */
-    .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-    .pdf-table td, .pdf-table th { border: 1px solid #000; padding: 4px 6px; font-size: 11px; text-align: left; }
-    .pdf-table th { background-color: #f2f2f2; text-transform: uppercase; }
-    .pdf-col-item { width: 28%; }
-    .pdf-col-status { width: 20%; }
-    .pdf-col-comments { width: 52%; }
+    .pdf-section-head { font-weight: bold; margin-top: 15px; margin-bottom: 6px; text-transform: uppercase; font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 2px; }
 
-    .pdf-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-    .pdf-sig-img { width: 100%; max-height: 45px; object-fit: contain; border-bottom: 1px solid #000; }
+    .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 4px; color: #333; }
+    .pdf-row-item { display: flex; align-items: baseline; font-size: 11px; margin-bottom: 5px; }
+    .pdf-col-1 { width: 30%; font-weight: 500; }
+    .pdf-col-2 { width: 22%; }
+    .pdf-col-3 { width: 48%; }
+
+    .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+    .pdf-sig-img { width: 100%; max-height: 40px; object-fit: contain; border-bottom: 1px solid #000; }
 
     @media print {
       body * { visibility: hidden; }
@@ -157,7 +155,7 @@
         </div>
       </div>
 
-      <!-- Configure Property Rooms (All Default to 0) -->
+      <!-- Configure Property Rooms -->
       <div class="section-title">Configure Property Rooms</div>
       <div class="form-card">
         <div class="counter-row"><span class="counter-label">Kitchen (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('kitchen', -1)">-</button><span class="counter-value" id="count-kitchen">0</span><button type="button" class="btn-counter" onclick="changeCount('kitchen', 1)">+</button></div></div>
@@ -287,12 +285,11 @@
     </div>
   </div>
 
-  <!-- VIEW 7: Printable Template -->
+  <!-- VIEW 7: Printable Template (No Table Box Border, Underline Style) -->
   <div id="print-template"></div>
 
 <script>
   let isEditMode = false;
-  // 全部默认归零
   let roomCounts = { kitchen: 0, dining: 0, bedroom: 0, bath: 0, living: 0, hallway: 0, basement: 0, stairs: 0, garage: 0, shed: 0 };
   let currentConfiguredRooms = [];
   let currentInspectingRoomIdx = null;
@@ -316,7 +313,6 @@
   function getRecords() { return JSON.parse(localStorage.getItem('inspection_records') || '[]'); }
   function saveRecords(records) { localStorage.setItem('inspection_records', JSON.stringify(records)); }
 
-  // 重置房型计数器为 0
   function resetRoomCounts() {
     roomCounts = { kitchen: 0, dining: 0, bedroom: 0, bath: 0, living: 0, hallway: 0, basement: 0, stairs: 0, garage: 0, shed: 0 };
     Object.keys(roomCounts).forEach(type => {
@@ -343,7 +339,6 @@
     `).join('');
   }
 
-  // 修改数量（增加Bedroom 5上限限制，其他3上限限制）
   function changeCount(type, delta) {
     const maxLimit = (type === 'bedroom') ? 5 : 3;
     const newCount = roomCounts[type] + delta;
@@ -354,7 +349,7 @@
   }
 
   function showFormView() {
-    resetRoomCounts(); // 打开新建页面时重置数量
+    resetRoomCounts();
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('form-view').classList.add('active');
   }
@@ -563,76 +558,102 @@
     showListView();
   }
 
-  /* ---------------- PDF EXPORT RENDER LOGIC (WIDTH OPTIMIZED) ---------------- */
+  /* ---------------- UNDERLINE PDF EXPORT RENDER LOGIC ---------------- */
   function exportPDF(event, index) {
     event.stopPropagation();
     const records = getRecords();
     const data = records[index];
     const printContainer = document.getElementById('print-template');
 
+    // Render individual room items with Underline Style
     let roomsHtml = data.rooms.map(r => `
-      <div style="margin-top:8px; font-weight:bold; background:#f2f2f2; padding:2px 4px; font-size:11px;">ROOM: ${r.name.toUpperCase()}</div>
-      <table class="pdf-table">
-        <tr><th class="pdf-col-item">ITEM</th><th class="pdf-col-status">STATUS</th><th class="pdf-col-comments">COMMENTS</th></tr>
-        <tr><td>Floors</td><td>${r.details.floors.status}</td><td>${r.details.floors.comment || ''}</td></tr>
-        <tr><td>Walls</td><td>${r.details.walls.status}</td><td>${r.details.walls.comment || ''}</td></tr>
-        <tr><td>Ceilings</td><td>${r.details.ceilings.status}</td><td>${r.details.ceilings.comment || ''}</td></tr>
-        ${Object.keys(r.details.others).map(k => `
-          <tr><td>${k}</td><td>${r.details.others[k].status}</td><td>${r.details.others[k].comment || ''}</td></tr>
-        `).join('')}
-      </table>
+      <div class="pdf-section-head">ROOM: ${r.name.toUpperCase()}</div>
+      <div class="pdf-row-header">
+        <div class="pdf-col-1">Item</div>
+        <div class="pdf-col-2">Status</div>
+        <div class="pdf-col-3">Comments</div>
+      </div>
+      <div class="pdf-row-item">
+        <div class="pdf-col-1">Floors</div>
+        <div class="pdf-col-2"><span class="pdf-underline">${r.details.floors.status}</span></div>
+        <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.floors.comment || ''}</span></div>
+      </div>
+      <div class="pdf-row-item">
+        <div class="pdf-col-1">Walls</div>
+        <div class="pdf-col-2"><span class="pdf-underline">${r.details.walls.status}</span></div>
+        <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.walls.comment || ''}</span></div>
+      </div>
+      <div class="pdf-row-item">
+        <div class="pdf-col-1">Ceilings</div>
+        <div class="pdf-col-2"><span class="pdf-underline">${r.details.ceilings.status}</span></div>
+        <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.ceilings.comment || ''}</span></div>
+      </div>
+      ${Object.keys(r.details.others).map(k => `
+        <div class="pdf-row-item">
+          <div class="pdf-col-1">${k}</div>
+          <div class="pdf-col-2"><span class="pdf-underline">${r.details.others[k].status}</span></div>
+          <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.others[k].comment || ''}</span></div>
+        </div>
+      `).join('')}
     `).join('');
 
+    // Render General Others items with Underline Style
     let othersHtml = Object.keys(data.generalOthers || {}).map(k => `
-      <tr><td>${k}</td><td>${data.generalOthers[k].status}</td><td>${data.generalOthers[k].comment || ''}</td></tr>
+      <div class="pdf-row-item">
+        <div class="pdf-col-1">${k}</div>
+        <div class="pdf-col-2"><span class="pdf-underline">${data.generalOthers[k].status}</span></div>
+        <div class="pdf-col-3"><span class="pdf-underline-full">${data.generalOthers[k].comment || ''}</span></div>
+      </div>
     `).join('');
 
     printContainer.innerHTML = `
       <div class="pdf-header">RENT SUPPLEMENT PRE MOVE IN LANDLORD INSPECTION REPORT</div>
       
-      <!-- 优化后的地址栏，留出更大空间给 Address -->
-      <table class="pdf-info-table">
-        <tr>
-          <td class="pdf-info-col-left"><b>RENT START DATE:</b> ${data.date || ''}</td>
-          <td class="pdf-info-col-right"><b>ADDRESS:</b> ${data.address || ''}</td>
-        </tr>
-        <tr>
-          <td class="pdf-info-col-left"><b>LANDLORD:</b> ${data.landlord || ''}</td>
-          <td class="pdf-info-col-right"><b>APT. NO.:</b> ${data.project || ''}</td>
-        </tr>
-        <tr>
-          <td class="pdf-info-col-left"><b>TENANT:</b> ${data.tenant || ''}</td>
-          <td class="pdf-info-col-right"><b>TOTAL UNITS:</b> ${data.units || ''}</td>
-        </tr>
-      </table>
+      <!-- General Header Information with Underlines -->
+      <div class="pdf-info-block">
+        <div><b>RENT START DATE:</b> <span class="pdf-underline">${data.date || ''}</span></div>
+        <div><b>ADDRESS:</b> <span class="pdf-underline">${data.address || ''}</span></div>
+        <div><b>LANDLORD:</b> <span class="pdf-underline">${data.landlord || ''}</span></div>
+        <div><b>APT. NO.:</b> <span class="pdf-underline">${data.project || ''}</span></div>
+        <div><b>TENANT:</b> <span class="pdf-underline">${data.tenant || ''}</span></div>
+        <div><b>TOTAL UNITS:</b> <span class="pdf-underline">${data.units || ''}</span></div>
+      </div>
 
-      <div style="font-weight:bold; margin-top:6px; margin-bottom:2px; font-size:11px;">BUILDING CONDITION OVERVIEW</div>
-      <table class="pdf-info-table">
-        <tr><td style="width:50%;">Appearance: ${data.appearance || 'N/A'}</td><td style="width:50%;">Foundation: ${data.foundation || 'N/A'}</td></tr>
-        <tr><td>Roof: ${data.roof || 'N/A'}</td><td>Walls: ${data.walls || 'N/A'}</td></tr>
-        <tr><td>Parking: ${data.parking || 'N/A'}</td><td>Heating System: ${data.heating || 'N/A'}</td></tr>
-      </table>
+      <div class="pdf-section-head">BUILDING CONDITION OVERVIEW</div>
+      <div class="pdf-info-block" style="margin-bottom:10px;">
+        <div>Appearance: <span class="pdf-underline">${data.appearance || 'N/A'}</span></div>
+        <div>Foundation: <span class="pdf-underline">${data.foundation || 'N/A'}</span></div>
+        <div>Roof: <span class="pdf-underline">${data.roof || 'N/A'}</span></div>
+        <div>Walls: <span class="pdf-underline">${data.walls || 'N/A'}</span></div>
+        <div>Parking: <span class="pdf-underline">${data.parking || 'N/A'}</span></div>
+        <div>Heating System: <span class="pdf-underline">${data.heating || 'N/A'}</span></div>
+      </div>
 
       ${roomsHtml}
 
-      <div style="margin-top:8px; font-weight:bold; background:#f2f2f2; padding:2px 4px; font-size:11px;">OTHERS & GENERAL FEATURES</div>
-      <table class="pdf-table">
-        <tr><th class="pdf-col-item">ITEM</th><th class="pdf-col-status">STATUS</th><th class="pdf-col-comments">COMMENTS</th></tr>
-        ${othersHtml}
-      </table>
+      <div class="pdf-section-head">OTHER ITEMS</div>
+      <div class="pdf-row-header">
+        <div class="pdf-col-1">Item</div>
+        <div class="pdf-col-2">Status</div>
+        <div class="pdf-col-3">Comments</div>
+      </div>
+      ${othersHtml}
 
-      <div style="margin-top:8px; font-size:11px;"><b>OVERALL COMMENTS:</b> ${data.overallComments || 'None'}</div>
+      <div style="margin-top:15px;">
+        <b>OVERALL COMMENTS:</b>
+        <div class="pdf-underline-full" style="margin-top:5px;">${data.overallComments || ''}</div>
+      </div>
 
-      <div style="margin-top:25px;" class="pdf-grid-2">
+      <div class="pdf-sig-grid">
         <div>
-          <b>INSPECTED BY:</b> ${data.inspectedBy || ''}<br><br>
+          <b>INSPECTED BY:</b> <span class="pdf-underline">${data.inspectedBy || ''}</span><br><br>
           <b>LANDLORD SIGNATURE:</b><br>
-          ${data.landlordSig ? `<img src="${data.landlordSig}" class="pdf-sig-img">` : '______________________'}
+          ${data.landlordSig ? `<img src="${data.landlordSig}" class="pdf-sig-img">` : '<div class="pdf-underline-full" style="margin-top:20px;"></div>'}
         </div>
         <div>
-          <b>DATE:</b> ${data.inspectionDate || ''}<br><br>
+          <b>DATE:</b> <span class="pdf-underline">${data.inspectionDate || ''}</span><br><br>
           <b>TENANT SIGNATURE:</b><br>
-          ${data.tenantSig ? `<img src="${data.tenantSig}" class="pdf-sig-img">` : '______________________'}
+          ${data.tenantSig ? `<img src="${data.tenantSig}" class="pdf-sig-img">` : '<div class="pdf-underline-full" style="margin-top:20px;"></div>'}
         </div>
       </div>
     `;
