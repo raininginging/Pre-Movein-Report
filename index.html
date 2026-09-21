@@ -12,6 +12,7 @@
       --border-color: #e5e5ea;
       --text-color: #000000;
       --secondary-text: #8e8e93;
+      --success-color: #34c759;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
     body { background-color: var(--bg-color); color: var(--text-color); }
@@ -32,13 +33,15 @@
     .record-item:last-child { border-bottom: none; }
     .record-title { font-size: 1rem; font-weight: 500; margin-bottom: 4px; color: #1c1c1e; }
     .record-subtitle { font-size: 0.85rem; color: var(--secondary-text); }
-    .empty-state { text-align: center; color: var(--secondary-text); padding: 40px 20px; font-size: 0.95rem; }
+    .status-badge { font-size: 0.8rem; padding: 4px 8px; border-radius: 12px; font-weight: 600; }
+    .status-pending { background: #ffe3e3; color: #d63384; }
+    .status-done { background: #d1e7dd; color: #0f5132; }
 
     /* Form Styles */
     .form-card { background: var(--card-bg); border-radius: 10px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-color); }
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.8rem; color: #3a3a3c; text-transform: uppercase; }
-    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; background: #fff; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; background: #fff; }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .section-title { font-weight: 700; font-size: 0.85rem; color: var(--secondary-text); text-transform: uppercase; margin: 16px 0 8px 4px; }
@@ -50,6 +53,11 @@
     .counter-controls { display: flex; align-items: center; gap: 12px; }
     .btn-counter { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .counter-value { font-size: 1rem; font-weight: 600; min-width: 20px; text-align: center; }
+
+    /* Room Inspection Checklist Table */
+    .checklist-table { width: 100%; border-collapse: collapse; }
+    .checklist-table td { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+    .checklist-table td:last-child { text-align: right; width: 140px; }
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
   </style>
@@ -68,7 +76,7 @@
     </div>
   </div>
 
-  <!-- VIEW 2: New Inspection Form -->
+  <!-- VIEW 2: New Inspection General Setup -->
   <div id="form-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showListView()">Cancel</button>
@@ -77,7 +85,6 @@
     </div>
 
     <form id="inspection-form" style="padding-top: 16px;" onsubmit="event.preventDefault();">
-      <!-- General Building Information -->
       <div class="section-title">General Information</div>
       <div class="form-card">
         <div class="form-group">
@@ -116,38 +123,18 @@
         </div>
       </div>
 
-      <!-- Building Condition Overview -->
-      <div class="section-title">Building Condition</div>
+      <div class="section-title">Building Condition Overview</div>
       <div class="form-card">
         <div class="grid-2">
-          <div class="form-group">
-            <label>APPEARANCE</label>
-            <input type="text" id="inp-appearance">
-          </div>
-          <div class="form-group">
-            <label>FOUNDATION</label>
-            <input type="text" id="inp-foundation">
-          </div>
-          <div class="form-group">
-            <label>ROOF</label>
-            <input type="text" id="inp-roof">
-          </div>
-          <div class="form-group">
-            <label>WALLS</label>
-            <input type="text" id="inp-walls">
-          </div>
-          <div class="form-group">
-            <label>PARKING FACILITIES</label>
-            <input type="text" id="inp-parking">
-          </div>
-          <div class="form-group">
-            <label>HEATING SYSTEM</label>
-            <input type="text" id="inp-heating">
-          </div>
+          <div class="form-group"><label>APPEARANCE</label><input type="text" id="inp-appearance"></div>
+          <div class="form-group"><label>FOUNDATION</label><input type="text" id="inp-foundation"></div>
+          <div class="form-group"><label>ROOF</label><input type="text" id="inp-roof"></div>
+          <div class="form-group"><label>WALLS</label><input type="text" id="inp-walls"></div>
+          <div class="form-group"><label>PARKING FACILITIES</label><input type="text" id="inp-parking"></div>
+          <div class="form-group"><label>HEATING SYSTEM</label><input type="text" id="inp-heating"></div>
         </div>
       </div>
 
-      <!-- Configure Property Rooms -->
       <div class="section-title">Configure Property Rooms</div>
       <div class="form-card">
         <div class="counter-row">
@@ -245,17 +232,77 @@
     </form>
   </div>
 
-  <!-- VIEW 3: Allocated Room Selection -->
+  <!-- VIEW 3: Allocated Room List -->
   <div id="room-list-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showFormView()">Back</button>
-      <div class="title" id="room-view-title">Room Selection</div>
+      <div class="title">Room Selection</div>
       <button class="btn-nav" onclick="saveCompleteRecord()">Done</button>
     </div>
     
     <div style="padding-top: 16px;">
       <div class="section-title">Select a Room to Inspect</div>
       <div class="record-list" id="allocated-rooms-container"></div>
+    </div>
+  </div>
+
+  <!-- VIEW 4: Specific Room Inspection View -->
+  <div id="room-detail-view" class="view">
+    <div class="nav-bar">
+      <button class="btn-nav" onclick="saveAndBackToRooms()">‹ Back</button>
+      <div class="title" id="room-detail-title">Inspect Room</div>
+      <button class="btn-nav" onclick="saveAndBackToRooms()">Save</button>
+    </div>
+
+    <div style="padding-top: 16px;">
+      <div class="section-title">FINISH (Interior)</div>
+      <div class="form-card">
+        <table class="checklist-table">
+          <tr>
+            <td>Floors</td>
+            <td>
+              <select id="item-floors">
+                <option value="Satisfactory">Satisfactory</option>
+                <option value="Unsatisfactory">Unsatisfactory</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Walls</td>
+            <td>
+              <select id="item-walls">
+                <option value="Satisfactory">Satisfactory</option>
+                <option value="Unsatisfactory">Unsatisfactory</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Ceilings</td>
+            <td>
+              <select id="item-ceilings">
+                <option value="Satisfactory">Satisfactory</option>
+                <option value="Unsatisfactory">Unsatisfactory</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="section-title">OTHER FIXTURES & ITEMS</div>
+      <div class="form-card">
+        <table class="checklist-table" id="dynamic-other-items">
+          <!-- Dynamic Items inserted via JS according to Room Category -->
+        </table>
+      </div>
+
+      <div class="section-title">ROOM COMMENTS</div>
+      <div class="form-card">
+        <div class="form-group" style="margin-bottom:0;">
+          <textarea id="room-comments" rows="3" placeholder="Enter comments for this room..."></textarea>
+        </div>
+      </div>
+
+      <button type="button" class="btn-action" onclick="saveAndBackToRooms()">Complete Room Inspection</button>
     </div>
   </div>
 
@@ -274,8 +321,23 @@
     shed: 0 
   };
   let currentConfiguredRooms = [];
+  let currentInspectingRoomIdx = null;
 
   document.getElementById('inp-date').valueAsDate = new Date();
+
+  // Template items per Room Category
+  const roomCategorySchemas = {
+    kitchen: ["Cupboards", "Fixtures", "Switches/Plugs", "Range Plug", "Range Hood", "Appliances Inc."],
+    bath: ["Showerhead", "Exhaust Fan", "Light Fixtures", "Shower Rod"],
+    living: ["Light Fixtures", "Switches/Plugs"],
+    bedroom: ["Light Fixtures", "Switches/Plugs", "Closets"],
+    dining: ["Light Fixtures", "Switches/Plugs"],
+    hallway: ["Light Fixtures", "Switches/Plugs", "Closets"],
+    basement: ["Light Fixtures", "Switches/Plugs", "Windows"],
+    stairs: ["Handrails", "Light Fixtures"],
+    garage: ["Doors", "Light Fixtures", "Switches/Plugs"],
+    shed: ["Doors", "Locks"]
+  };
 
   function getRecords() {
     return JSON.parse(localStorage.getItem('inspection_records') || '[]');
@@ -313,14 +375,12 @@
   }
 
   function showFormView() {
-    document.getElementById('list-view').classList.remove('active');
-    document.getElementById('room-list-view').classList.remove('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('form-view').classList.add('active');
   }
 
   function showListView() {
-    document.getElementById('form-view').classList.remove('active');
-    document.getElementById('room-list-view').classList.remove('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('list-view').classList.add('active');
     renderList();
   }
@@ -347,36 +407,101 @@
       { key: 'shed', label: 'Shed' }
     ];
 
+    // Only add rooms where count > 0; append numbers if count > 1
     categories.forEach(cat => {
       const count = roomCounts[cat.key];
       for (let i = 1; i <= count; i++) {
         currentConfiguredRooms.push({
+          categoryKey: cat.key,
           name: count > 1 ? `${cat.label} ${i}` : cat.label,
-          status: 'Pending'
+          status: 'Pending',
+          details: {
+            floors: 'Satisfactory',
+            walls: 'Satisfactory',
+            ceilings: 'Satisfactory',
+            others: {},
+            comments: ''
+          }
         });
       }
     });
 
     renderRoomSelection();
-    document.getElementById('form-view').classList.remove('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('room-list-view').classList.add('active');
   }
 
   function renderRoomSelection() {
     const container = document.getElementById('allocated-rooms-container');
     container.innerHTML = currentConfiguredRooms.map((room, idx) => `
-      <div class="record-item" onclick="inspectRoom(${idx})">
+      <div class="record-item" onclick="openRoomInspection(${idx})">
         <div>
           <div class="record-title">${room.name}</div>
-          <div class="record-subtitle">Status: ${room.status}</div>
+          <div class="record-subtitle">
+            <span class="status-badge ${room.status === 'Completed' ? 'status-done' : 'status-pending'}">
+              ${room.status}
+            </span>
+          </div>
         </div>
         <span style="color:var(--primary-color); font-weight: 500;">Inspect ›</span>
       </div>
     `).join('');
   }
 
-  function inspectRoom(index) {
-    alert(`Starting inspection for: ${currentConfiguredRooms[index].name}`);
+  function openRoomInspection(index) {
+    currentInspectingRoomIdx = index;
+    const room = currentConfiguredRooms[index];
+
+    document.getElementById('room-detail-title').innerText = room.name;
+    document.getElementById('item-floors').value = room.details.floors || 'Satisfactory';
+    document.getElementById('item-walls').value = room.details.walls || 'Satisfactory';
+    document.getElementById('item-ceilings').value = room.details.ceilings || 'Satisfactory';
+    document.getElementById('room-comments').value = room.details.comments || '';
+
+    // Render dynamic "OTHER" checklist items according to category
+    const otherTable = document.getElementById('dynamic-other-items');
+    const itemsSchema = roomCategorySchemas[room.categoryKey] || ["Light Fixtures", "Switches/Plugs"];
+
+    otherTable.innerHTML = itemsSchema.map(itemKey => {
+      const savedVal = room.details.others[itemKey] || 'Satisfactory';
+      return `
+        <tr>
+          <td>${itemKey}</td>
+          <td>
+            <select data-other-key="${itemKey}">
+              <option value="Satisfactory" ${savedVal === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
+              <option value="Unsatisfactory" ${savedVal === 'Unsatisfactory' ? 'selected' : ''}>Unsatisfactory</option>
+            </select>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('room-detail-view').classList.add('active');
+  }
+
+  function saveAndBackToRooms() {
+    if (currentInspectingRoomIdx !== null) {
+      const room = currentConfiguredRooms[currentInspectingRoomIdx];
+      room.details.floors = document.getElementById('item-floors').value;
+      room.details.walls = document.getElementById('item-walls').value;
+      room.details.ceilings = document.getElementById('item-ceilings').value;
+      room.details.comments = document.getElementById('room-comments').value;
+
+      // Save dynamic "OTHER" fields
+      const otherSelects = document.querySelectorAll('#dynamic-other-items select');
+      otherSelects.forEach(select => {
+        const key = select.getAttribute('data-other-key');
+        room.details.others[key] = select.value;
+      });
+
+      room.status = 'Completed';
+    }
+
+    renderRoomSelection();
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('room-list-view').classList.add('active');
   }
 
   function saveCompleteRecord() {
@@ -428,7 +553,7 @@
     if (isEditMode) return;
     const records = getRecords();
     const item = records[index];
-    alert(`Viewing Record: ${item.address}\nRooms: ${item.rooms ? item.rooms.map(r => r.name).join(', ') : 'None'}`);
+    alert(`Inspection Details:\nAddress: ${item.address}\nRooms Inspected: ${item.rooms ? item.rooms.length : 0}`);
   }
 
   renderList();
