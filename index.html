@@ -12,7 +12,6 @@
       --border-color: #e5e5ea;
       --text-color: #000000;
       --secondary-text: #8e8e93;
-      --success-color: #34c759;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
     body { background-color: var(--bg-color); color: var(--text-color); }
@@ -54,10 +53,17 @@
     .btn-counter { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .counter-value { font-size: 1rem; font-weight: 600; min-width: 20px; text-align: center; }
 
-    /* Room Inspection Checklist Table */
-    .checklist-table { width: 100%; border-collapse: collapse; }
-    .checklist-table td { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
-    .checklist-table td:last-child { text-align: right; width: 140px; }
+    /* 核心布局调整：项目名称 -> Satisfactory选择框 -> Comment输入框 */
+    .inline-item-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+    .inline-item-row:last-child { border-bottom: none; }
+    .inline-item-name { width: 120px; font-weight: 500; font-size: 0.9rem; flex-shrink: 0; }
+    .inline-item-select { width: 125px; padding: 6px 4px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--border-color); background: #fff; flex-shrink: 0; }
+    .inline-item-comment { flex: 1; padding: 6px 8px; font-size: 0.85rem; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; }
+    .inline-item-comment:focus { background: #fff; border-color: var(--primary-color); }
+
+    /* Signature Pad */
+    canvas { border: 1px dashed var(--secondary-text); border-radius: 8px; background: #fafafa; width: 100%; height: 100px; touch-action: none; }
+    .btn-clear { background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; float: right; margin-top: 4px; }
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
   </style>
@@ -76,7 +82,7 @@
     </div>
   </div>
 
-  <!-- VIEW 2: New Inspection General Setup -->
+  <!-- VIEW 2: New Inspection Setup -->
   <div id="form-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showListView()">Cancel</button>
@@ -137,107 +143,28 @@
 
       <div class="section-title">Configure Property Rooms</div>
       <div class="form-card">
-        <div class="counter-row">
-          <span class="counter-label">Kitchen</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('kitchen', -1)">-</button>
-            <span class="counter-value" id="count-kitchen">1</span>
-            <button type="button" class="btn-counter" onclick="changeCount('kitchen', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Dining Room</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('dining', -1)">-</button>
-            <span class="counter-value" id="count-dining">1</span>
-            <button type="button" class="btn-counter" onclick="changeCount('dining', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Bedroom</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('bedroom', -1)">-</button>
-            <span class="counter-value" id="count-bedroom">2</span>
-            <button type="button" class="btn-counter" onclick="changeCount('bedroom', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Bathroom</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('bath', -1)">-</button>
-            <span class="counter-value" id="count-bath">1</span>
-            <button type="button" class="btn-counter" onclick="changeCount('bath', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Living Room</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('living', -1)">-</button>
-            <span class="counter-value" id="count-living">1</span>
-            <button type="button" class="btn-counter" onclick="changeCount('living', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Hallway / Corridor</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('hallway', -1)">-</button>
-            <span class="counter-value" id="count-hallway">1</span>
-            <button type="button" class="btn-counter" onclick="changeCount('hallway', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Basement</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('basement', -1)">-</button>
-            <span class="counter-value" id="count-basement">0</span>
-            <button type="button" class="btn-counter" onclick="changeCount('basement', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Stairs</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('stairs', -1)">-</button>
-            <span class="counter-value" id="count-stairs">0</span>
-            <button type="button" class="btn-counter" onclick="changeCount('stairs', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Garage</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('garage', -1)">-</button>
-            <span class="counter-value" id="count-garage">0</span>
-            <button type="button" class="btn-counter" onclick="changeCount('garage', 1)">+</button>
-          </div>
-        </div>
-
-        <div class="counter-row">
-          <span class="counter-label">Shed</span>
-          <div class="counter-controls">
-            <button type="button" class="btn-counter" onclick="changeCount('shed', -1)">-</button>
-            <span class="counter-value" id="count-shed">0</span>
-            <button type="button" class="btn-counter" onclick="changeCount('shed', 1)">+</button>
-          </div>
-        </div>
+        <div class="counter-row"><span class="counter-label">Kitchen</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('kitchen', -1)">-</button><span class="counter-value" id="count-kitchen">1</span><button type="button" class="btn-counter" onclick="changeCount('kitchen', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Dining Room</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('dining', -1)">-</button><span class="counter-value" id="count-dining">1</span><button type="button" class="btn-counter" onclick="changeCount('dining', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Bedroom</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('bedroom', -1)">-</button><span class="counter-value" id="count-bedroom">2</span><button type="button" class="btn-counter" onclick="changeCount('bedroom', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Bathroom</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('bath', -1)">-</button><span class="counter-value" id="count-bath">1</span><button type="button" class="btn-counter" onclick="changeCount('bath', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Living Room</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('living', -1)">-</button><span class="counter-value" id="count-living">1</span><button type="button" class="btn-counter" onclick="changeCount('living', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Hallway / Corridor</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('hallway', -1)">-</button><span class="counter-value" id="count-hallway">1</span><button type="button" class="btn-counter" onclick="changeCount('hallway', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Basement</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('basement', -1)">-</button><span class="counter-value" id="count-basement">0</span><button type="button" class="btn-counter" onclick="changeCount('basement', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Stairs</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('stairs', -1)">-</button><span class="counter-value" id="count-stairs">0</span><button type="button" class="btn-counter" onclick="changeCount('stairs', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Garage</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('garage', -1)">-</button><span class="counter-value" id="count-garage">0</span><button type="button" class="btn-counter" onclick="changeCount('garage', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Shed</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('shed', -1)">-</button><span class="counter-value" id="count-shed">0</span><button type="button" class="btn-counter" onclick="changeCount('shed', 1)">+</button></div></div>
       </div>
 
       <button type="button" class="btn-action" onclick="nextToRoomSetup()">Start Room Inspection</button>
     </form>
   </div>
 
-  <!-- VIEW 3: Allocated Room List -->
+  <!-- VIEW 3: Allocated Room Selection -->
   <div id="room-list-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showFormView()">Back</button>
       <div class="title">Room Selection</div>
-      <button class="btn-nav" onclick="saveCompleteRecord()">Done</button>
+      <button class="btn-nav" onclick="showSignaturesView()">Next / Sign</button>
     </div>
     
     <div style="padding-top: 16px;">
@@ -246,7 +173,7 @@
     </div>
   </div>
 
-  <!-- VIEW 4: Specific Room Inspection View -->
+  <!-- VIEW 4: Room Inspection Detail -->
   <div id="room-detail-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="saveAndBackToRooms()">‹ Back</button>
@@ -257,75 +184,84 @@
     <div style="padding-top: 16px;">
       <div class="section-title">FINISH (Interior)</div>
       <div class="form-card">
-        <table class="checklist-table">
-          <tr>
-            <td>Floors</td>
-            <td>
-              <select id="item-floors">
-                <option value="Satisfactory">Satisfactory</option>
-                <option value="Unsatisfactory">Unsatisfactory</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>Walls</td>
-            <td>
-              <select id="item-walls">
-                <option value="Satisfactory">Satisfactory</option>
-                <option value="Unsatisfactory">Unsatisfactory</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>Ceilings</td>
-            <td>
-              <select id="item-ceilings">
-                <option value="Satisfactory">Satisfactory</option>
-                <option value="Unsatisfactory">Unsatisfactory</option>
-              </select>
-            </td>
-          </tr>
-        </table>
+        <!-- Floors -->
+        <div class="inline-item-row">
+          <span class="inline-item-name">Floors</span>
+          <select id="item-floors-status" class="inline-item-select">
+            <option value="Satisfactory">Satisfactory</option>
+            <option value="Unsatisfactory">Unsatisfactory</option>
+          </select>
+          <input type="text" id="item-floors-comment" class="inline-item-comment" placeholder="Comment...">
+        </div>
+
+        <!-- Walls -->
+        <div class="inline-item-row">
+          <span class="inline-item-name">Walls</span>
+          <select id="item-walls-status" class="inline-item-select">
+            <option value="Satisfactory">Satisfactory</option>
+            <option value="Unsatisfactory">Unsatisfactory</option>
+          </select>
+          <input type="text" id="item-walls-comment" class="inline-item-comment" placeholder="Comment...">
+        </div>
+
+        <!-- Ceilings -->
+        <div class="inline-item-row">
+          <span class="inline-item-name">Ceilings</span>
+          <select id="item-ceilings-status" class="inline-item-select">
+            <option value="Satisfactory">Satisfactory</option>
+            <option value="Unsatisfactory">Unsatisfactory</option>
+          </select>
+          <input type="text" id="item-ceilings-comment" class="inline-item-comment" placeholder="Comment...">
+        </div>
       </div>
 
       <div class="section-title">OTHER FIXTURES & ITEMS</div>
-      <div class="form-card">
-        <table class="checklist-table" id="dynamic-other-items">
-          <!-- Dynamic Items inserted via JS according to Room Category -->
-        </table>
+      <div class="form-card" id="dynamic-other-container">
+        <!-- Dynamic Items dynamically rendered here -->
       </div>
 
       <div class="section-title">ROOM COMMENTS</div>
       <div class="form-card">
-        <div class="form-group" style="margin-bottom:0;">
-          <textarea id="room-comments" rows="3" placeholder="Enter comments for this room..."></textarea>
-        </div>
+        <textarea id="room-general-comments" rows="2" placeholder="Enter comments for this room..."></textarea>
       </div>
 
       <button type="button" class="btn-action" onclick="saveAndBackToRooms()">Complete Room Inspection</button>
     </div>
   </div>
 
+  <!-- VIEW 5: Signatures & Finish -->
+  <div id="signatures-view" class="view">
+    <div class="nav-bar">
+      <button class="btn-nav" onclick="backToRoomSelection()">Back</button>
+      <div class="title">Sign & Complete</div>
+      <button class="btn-nav" onclick="saveCompleteRecord()">Finish</button>
+    </div>
+
+    <div style="padding-top: 16px;">
+      <div class="section-title">LANDLORD SIGNATURE</div>
+      <div class="form-card">
+        <canvas id="canvas-landlord"></canvas>
+        <button type="button" class="btn-clear" onclick="clearCanvas('canvas-landlord')">Clear</button>
+      </div>
+
+      <div class="section-title">TENANT SIGNATURE</div>
+      <div class="form-card">
+        <canvas id="canvas-tenant"></canvas>
+        <button type="button" class="btn-clear" onclick="clearCanvas('canvas-tenant')">Clear</button>
+      </div>
+
+      <button type="button" class="btn-action" onclick="saveCompleteRecord()">Save Record</button>
+    </div>
+  </div>
+
 <script>
   let isEditMode = false;
-  let roomCounts = { 
-    kitchen: 1, 
-    dining: 1, 
-    bedroom: 2, 
-    bath: 1, 
-    living: 1, 
-    hallway: 1, 
-    basement: 0, 
-    stairs: 0, 
-    garage: 0, 
-    shed: 0 
-  };
+  let roomCounts = { kitchen: 1, dining: 1, bedroom: 2, bath: 1, living: 1, hallway: 1, basement: 0, stairs: 0, garage: 0, shed: 0 };
   let currentConfiguredRooms = [];
   let currentInspectingRoomIdx = null;
 
   document.getElementById('inp-date').valueAsDate = new Date();
 
-  // Template items per Room Category
   const roomCategorySchemas = {
     kitchen: ["Cupboards", "Fixtures", "Switches/Plugs", "Range Plug", "Range Hood", "Appliances Inc."],
     bath: ["Showerhead", "Exhaust Fan", "Light Fixtures", "Shower Rod"],
@@ -339,23 +275,16 @@
     shed: ["Doors", "Locks"]
   };
 
-  function getRecords() {
-    return JSON.parse(localStorage.getItem('inspection_records') || '[]');
-  }
-
-  function saveRecords(records) {
-    localStorage.setItem('inspection_records', JSON.stringify(records));
-  }
+  function getRecords() { return JSON.parse(localStorage.getItem('inspection_records') || '[]'); }
+  function saveRecords(records) { localStorage.setItem('inspection_records', JSON.stringify(records)); }
 
   function renderList() {
     const records = getRecords();
     const container = document.getElementById('records-container');
-    
     if (records.length === 0) {
       container.innerHTML = '<div class="empty-state">No inspection records yet.<br>Tap + to create one.</div>';
       return;
     }
-
     container.innerHTML = records.map((item, index) => `
       <div class="record-item" onclick="onItemClick(${index})">
         <div>
@@ -387,27 +316,17 @@
 
   function nextToRoomSetup() {
     const address = document.getElementById('inp-address').value;
-    if (!address) {
-      alert('Please fill in the Address / Title.');
-      return;
-    }
+    if (!address) { alert('Please fill in the Address / Title.'); return; }
 
     currentConfiguredRooms = [];
-    
     const categories = [
-      { key: 'kitchen', label: 'Kitchen' },
-      { key: 'dining', label: 'Dining Room' },
-      { key: 'bedroom', label: 'Bedroom' },
-      { key: 'bath', label: 'Bathroom' },
-      { key: 'living', label: 'Living Room' },
-      { key: 'hallway', label: 'Hallway' },
-      { key: 'basement', label: 'Basement' },
-      { key: 'stairs', label: 'Stairs' },
-      { key: 'garage', label: 'Garage' },
-      { key: 'shed', label: 'Shed' }
+      { key: 'kitchen', label: 'Kitchen' }, { key: 'dining', label: 'Dining Room' },
+      { key: 'bedroom', label: 'Bedroom' }, { key: 'bath', label: 'Bathroom' },
+      { key: 'living', label: 'Living Room' }, { key: 'hallway', label: 'Hallway' },
+      { key: 'basement', label: 'Basement' }, { key: 'stairs', label: 'Stairs' },
+      { key: 'garage', label: 'Garage' }, { key: 'shed', label: 'Shed' }
     ];
 
-    // Only add rooms where count > 0; append numbers if count > 1
     categories.forEach(cat => {
       const count = roomCounts[cat.key];
       for (let i = 1; i <= count; i++) {
@@ -416,11 +335,11 @@
           name: count > 1 ? `${cat.label} ${i}` : cat.label,
           status: 'Pending',
           details: {
-            floors: 'Satisfactory',
-            walls: 'Satisfactory',
-            ceilings: 'Satisfactory',
+            floors: { status: 'Satisfactory', comment: '' },
+            walls: { status: 'Satisfactory', comment: '' },
+            ceilings: { status: 'Satisfactory', comment: '' },
             others: {},
-            comments: ''
+            generalComments: ''
           }
         });
       }
@@ -438,9 +357,7 @@
         <div>
           <div class="record-title">${room.name}</div>
           <div class="record-subtitle">
-            <span class="status-badge ${room.status === 'Completed' ? 'status-done' : 'status-pending'}">
-              ${room.status}
-            </span>
+            <span class="status-badge ${room.status === 'Completed' ? 'status-done' : 'status-pending'}">${room.status}</span>
           </div>
         </div>
         <span style="color:var(--primary-color); font-weight: 500;">Inspect ›</span>
@@ -453,27 +370,29 @@
     const room = currentConfiguredRooms[index];
 
     document.getElementById('room-detail-title').innerText = room.name;
-    document.getElementById('item-floors').value = room.details.floors || 'Satisfactory';
-    document.getElementById('item-walls').value = room.details.walls || 'Satisfactory';
-    document.getElementById('item-ceilings').value = room.details.ceilings || 'Satisfactory';
-    document.getElementById('room-comments').value = room.details.comments || '';
+    document.getElementById('item-floors-status').value = room.details.floors.status;
+    document.getElementById('item-floors-comment').value = room.details.floors.comment;
+    document.getElementById('item-walls-status').value = room.details.walls.status;
+    document.getElementById('item-walls-comment').value = room.details.walls.comment;
+    document.getElementById('item-ceilings-status').value = room.details.ceilings.status;
+    document.getElementById('item-ceilings-comment').value = room.details.ceilings.comment;
+    document.getElementById('room-general-comments').value = room.details.generalComments || '';
 
-    // Render dynamic "OTHER" checklist items according to category
-    const otherTable = document.getElementById('dynamic-other-items');
+    // 动态渲染 OTHER 区域（按行紧凑排列：[名称] -> [Satisfactory下拉框] -> [Comment输入框]）
+    const container = document.getElementById('dynamic-other-container');
     const itemsSchema = roomCategorySchemas[room.categoryKey] || ["Light Fixtures", "Switches/Plugs"];
 
-    otherTable.innerHTML = itemsSchema.map(itemKey => {
-      const savedVal = room.details.others[itemKey] || 'Satisfactory';
+    container.innerHTML = itemsSchema.map(itemKey => {
+      const saved = room.details.others[itemKey] || { status: 'Satisfactory', comment: '' };
       return `
-        <tr>
-          <td>${itemKey}</td>
-          <td>
-            <select data-other-key="${itemKey}">
-              <option value="Satisfactory" ${savedVal === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
-              <option value="Unsatisfactory" ${savedVal === 'Unsatisfactory' ? 'selected' : ''}>Unsatisfactory</option>
-            </select>
-          </td>
-        </tr>
+        <div class="inline-item-row">
+          <span class="inline-item-name">${itemKey}</span>
+          <select class="inline-item-select" data-other-key="${itemKey}" data-type="status">
+            <option value="Satisfactory" ${saved.status === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
+            <option value="Unsatisfactory" ${saved.status === 'Unsatisfactory' ? 'selected' : ''}>Unsatisfactory</option>
+          </select>
+          <input type="text" class="inline-item-comment" data-other-key="${itemKey}" data-type="comment" value="${saved.comment}" placeholder="Comment...">
+        </div>
       `;
     }).join('');
 
@@ -484,16 +403,31 @@
   function saveAndBackToRooms() {
     if (currentInspectingRoomIdx !== null) {
       const room = currentConfiguredRooms[currentInspectingRoomIdx];
-      room.details.floors = document.getElementById('item-floors').value;
-      room.details.walls = document.getElementById('item-walls').value;
-      room.details.ceilings = document.getElementById('item-ceilings').value;
-      room.details.comments = document.getElementById('room-comments').value;
+      room.details.floors = {
+        status: document.getElementById('item-floors-status').value,
+        comment: document.getElementById('item-floors-comment').value
+      };
+      room.details.walls = {
+        status: document.getElementById('item-walls-status').value,
+        comment: document.getElementById('item-walls-comment').value
+      };
+      room.details.ceilings = {
+        status: document.getElementById('item-ceilings-status').value,
+        comment: document.getElementById('item-ceilings-comment').value
+      };
+      room.details.generalComments = document.getElementById('room-general-comments').value;
 
-      // Save dynamic "OTHER" fields
-      const otherSelects = document.querySelectorAll('#dynamic-other-items select');
-      otherSelects.forEach(select => {
-        const key = select.getAttribute('data-other-key');
-        room.details.others[key] = select.value;
+      // 保存动态 OTHER 字段数据
+      const itemsSchema = roomCategorySchemas[room.categoryKey] || ["Light Fixtures", "Switches/Plugs"];
+      itemsSchema.forEach(key => {
+        const statusEl = document.querySelector(`select[data-other-key="${key}"][data-type="status"]`);
+        const commentEl = document.querySelector(`input[data-other-key="${key}"][data-type="comment"]`);
+        if (statusEl && commentEl) {
+          room.details.others[key] = {
+            status: statusEl.value,
+            comment: commentEl.value
+          };
+        }
       });
 
       room.status = 'Completed';
@@ -504,16 +438,26 @@
     document.getElementById('room-list-view').classList.add('active');
   }
 
-  function saveCompleteRecord() {
-    const address = document.getElementById('inp-address').value;
-    const date = document.getElementById('inp-date').value;
-    const project = document.getElementById('inp-project').value;
+  function showSignaturesView() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('signatures-view').classList.add('active');
+    setTimeout(() => {
+      initCanvas('canvas-landlord');
+      initCanvas('canvas-tenant');
+    }, 100);
+  }
 
+  function backToRoomSelection() {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('room-list-view').classList.add('active');
+  }
+
+  function saveCompleteRecord() {
     const newRecord = {
       id: Date.now(),
-      address: address,
-      project: project,
-      date: date,
+      address: document.getElementById('inp-address').value,
+      project: document.getElementById('inp-project').value,
+      date: document.getElementById('inp-date').value,
       landlord: document.getElementById('inp-landlord').value,
       tenant: document.getElementById('inp-tenant').value,
       age: document.getElementById('inp-age').value,
@@ -553,7 +497,32 @@
     if (isEditMode) return;
     const records = getRecords();
     const item = records[index];
-    alert(`Inspection Details:\nAddress: ${item.address}\nRooms Inspected: ${item.rooms ? item.rooms.length : 0}`);
+    alert(`Inspection Details:\nAddress: ${item.address}\nRooms: ${item.rooms ? item.rooms.length : 0}`);
+  }
+
+  function initCanvas(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    let drawing = false;
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.onmousedown = canvas.ontouchstart = (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
+    canvas.onmousemove = canvas.ontouchmove = (e) => { if (drawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); } };
+    canvas.onmouseup = canvas.ontouchend = () => { drawing = false; };
+  }
+
+  function clearCanvas(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   renderList();
