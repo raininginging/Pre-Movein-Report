@@ -53,7 +53,7 @@
     .btn-counter { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .counter-value { font-size: 1rem; font-weight: 600; min-width: 20px; text-align: center; }
 
-    /* Inline Item Row Layout: Name -> Satisfactory Select -> Comment */
+    /* Inline Item Row Layout */
     .inline-item-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
     .inline-item-row:last-child { border-bottom: none; }
     .inline-item-name { width: 140px; font-weight: 500; font-size: 0.85rem; flex-shrink: 0; }
@@ -67,14 +67,26 @@
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
 
-    /* ---------------- PRINT / PDF TEMPLATE STYLING ---------------- */
+    /* ---------------- PRINT / PDF TEMPLATE STYLING (OPTIMIZED) ---------------- */
     #print-template { display: none; background: white; padding: 20px; color: #000; font-family: "Times New Roman", Times, serif; font-size: 12px; }
-    .pdf-header { text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 15px; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 5px; }
-    .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-    .pdf-table td, .pdf-table th { border: 1px solid #000; padding: 5px 8px; font-size: 11px; text-align: left; }
+    .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 12px; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 4px; }
+    
+    /* 1. Header Info Table with expanded Address column */
+    .pdf-info-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    .pdf-info-table td { border: 1px solid #000; padding: 4px 6px; font-size: 11px; }
+    .pdf-info-col-left { width: 35%; }
+    .pdf-info-col-right { width: 65%; }
+
+    /* 2. Item Checklist Table with optimized widths */
+    .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    .pdf-table td, .pdf-table th { border: 1px solid #000; padding: 4px 6px; font-size: 11px; text-align: left; }
     .pdf-table th { background-color: #f2f2f2; text-transform: uppercase; }
+    .pdf-col-item { width: 28%; }
+    .pdf-col-status { width: 20%; }
+    .pdf-col-comments { width: 52%; }
+
     .pdf-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-    .pdf-sig-img { width: 100%; max-height: 50px; object-fit: contain; border-bottom: 1px solid #000; }
+    .pdf-sig-img { width: 100%; max-height: 45px; object-fit: contain; border-bottom: 1px solid #000; }
 
     @media print {
       body * { visibility: hidden; }
@@ -145,18 +157,19 @@
         </div>
       </div>
 
+      <!-- Configure Property Rooms (All Default to 0) -->
       <div class="section-title">Configure Property Rooms</div>
       <div class="form-card">
-        <div class="counter-row"><span class="counter-label">Kitchen</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('kitchen', -1)">-</button><span class="counter-value" id="count-kitchen">1</span><button type="button" class="btn-counter" onclick="changeCount('kitchen', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Dining Room</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('dining', -1)">-</button><span class="counter-value" id="count-dining">1</span><button type="button" class="btn-counter" onclick="changeCount('dining', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Bedroom</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('bedroom', -1)">-</button><span class="counter-value" id="count-bedroom">2</span><button type="button" class="btn-counter" onclick="changeCount('bedroom', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Bathroom</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('bath', -1)">-</button><span class="counter-value" id="count-bath">1</span><button type="button" class="btn-counter" onclick="changeCount('bath', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Living Room</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('living', -1)">-</button><span class="counter-value" id="count-living">1</span><button type="button" class="btn-counter" onclick="changeCount('living', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Hallway / Corridor</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('hallway', -1)">-</button><span class="counter-value" id="count-hallway">1</span><button type="button" class="btn-counter" onclick="changeCount('hallway', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Basement</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('basement', -1)">-</button><span class="counter-value" id="count-basement">0</span><button type="button" class="btn-counter" onclick="changeCount('basement', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Stairs</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('stairs', -1)">-</button><span class="counter-value" id="count-stairs">0</span><button type="button" class="btn-counter" onclick="changeCount('stairs', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Garage</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('garage', -1)">-</button><span class="counter-value" id="count-garage">0</span><button type="button" class="btn-counter" onclick="changeCount('garage', 1)">+</button></div></div>
-        <div class="counter-row"><span class="counter-label">Shed</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('shed', -1)">-</button><span class="counter-value" id="count-shed">0</span><button type="button" class="btn-counter" onclick="changeCount('shed', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Kitchen (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('kitchen', -1)">-</button><span class="counter-value" id="count-kitchen">0</span><button type="button" class="btn-counter" onclick="changeCount('kitchen', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Dining Room (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('dining', -1)">-</button><span class="counter-value" id="count-dining">0</span><button type="button" class="btn-counter" onclick="changeCount('dining', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Bedroom (Max 5)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('bedroom', -1)">-</button><span class="counter-value" id="count-bedroom">0</span><button type="button" class="btn-counter" onclick="changeCount('bedroom', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Bathroom (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('bath', -1)">-</button><span class="counter-value" id="count-bath">0</span><button type="button" class="btn-counter" onclick="changeCount('bath', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Living Room (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('living', -1)">-</button><span class="counter-value" id="count-living">0</span><button type="button" class="btn-counter" onclick="changeCount('living', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Hallway / Corridor (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('hallway', -1)">-</button><span class="counter-value" id="count-hallway">0</span><button type="button" class="btn-counter" onclick="changeCount('hallway', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Basement (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('basement', -1)">-</button><span class="counter-value" id="count-basement">0</span><button type="button" class="btn-counter" onclick="changeCount('basement', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Stairs (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('stairs', -1)">-</button><span class="counter-value" id="count-stairs">0</span><button type="button" class="btn-counter" onclick="changeCount('stairs', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Garage (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('garage', -1)">-</button><span class="counter-value" id="count-garage">0</span><button type="button" class="btn-counter" onclick="changeCount('garage', 1)">+</button></div></div>
+        <div class="counter-row"><span class="counter-label">Shed (Max 3)</span><div class="counter-controls"><button type="button" class="btn-counter" onclick="changeCount('shed', -1)">-</button><span class="counter-value" id="count-shed">0</span><button type="button" class="btn-counter" onclick="changeCount('shed', 1)">+</button></div></div>
       </div>
 
       <button type="button" class="btn-action" onclick="goToStep2Rooms()">Next: Inspect Rooms</button>
@@ -178,7 +191,7 @@
     </div>
   </div>
 
-  <!-- VIEW 4: Room Inspection Detail Modal/Page -->
+  <!-- VIEW 4: Room Inspection Detail -->
   <div id="room-detail-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="saveAndBackToRooms()">‹ Back</button>
@@ -206,7 +219,7 @@
     </div>
   </div>
 
-  <!-- VIEW 5: Step 3 - 'OTHERS' General Checklist View (补全 Smoke Detectors) -->
+  <!-- VIEW 5: Step 3 - 'OTHERS' General Checklist View -->
   <div id="others-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="backToStep2Rooms()">Back</button>
@@ -225,7 +238,6 @@
         <div class="inline-item-row"><span class="inline-item-name">Hot Water Tank Location</span><select class="inline-item-select" data-gen="Hot Water Tank Location-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Hot Water Tank Location-comment" placeholder="Comment..."></div>
         <div class="inline-item-row"><span class="inline-item-name">Screens</span><select class="inline-item-select" data-gen="Screens-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Screens-comment" placeholder="Comment..."></div>
         <div class="inline-item-row"><span class="inline-item-name">Weather Stripping</span><select class="inline-item-select" data-gen="Weather Stripping-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Weather Stripping-comment" placeholder="Comment..."></div>
-        <!-- 已加入 Smoke Detectors -->
         <div class="inline-item-row"><span class="inline-item-name">Smoke Detectors</span><select class="inline-item-select" data-gen="Smoke Detectors-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Smoke Detectors-comment" placeholder="Comment..."></div>
       </div>
 
@@ -275,12 +287,13 @@
     </div>
   </div>
 
-  <!-- VIEW 7: PDF / Print Export Printable Template -->
+  <!-- VIEW 7: Printable Template -->
   <div id="print-template"></div>
 
 <script>
   let isEditMode = false;
-  let roomCounts = { kitchen: 1, dining: 1, bedroom: 2, bath: 1, living: 1, hallway: 1, basement: 0, stairs: 0, garage: 0, shed: 0 };
+  // 全部默认归零
+  let roomCounts = { kitchen: 0, dining: 0, bedroom: 0, bath: 0, living: 0, hallway: 0, basement: 0, stairs: 0, garage: 0, shed: 0 };
   let currentConfiguredRooms = [];
   let currentInspectingRoomIdx = null;
 
@@ -303,6 +316,15 @@
   function getRecords() { return JSON.parse(localStorage.getItem('inspection_records') || '[]'); }
   function saveRecords(records) { localStorage.setItem('inspection_records', JSON.stringify(records)); }
 
+  // 重置房型计数器为 0
+  function resetRoomCounts() {
+    roomCounts = { kitchen: 0, dining: 0, bedroom: 0, bath: 0, living: 0, hallway: 0, basement: 0, stairs: 0, garage: 0, shed: 0 };
+    Object.keys(roomCounts).forEach(type => {
+      const el = document.getElementById(`count-${type}`);
+      if (el) el.innerText = '0';
+    });
+  }
+
   function renderList() {
     const records = getRecords();
     const container = document.getElementById('records-container');
@@ -321,14 +343,18 @@
     `).join('');
   }
 
+  // 修改数量（增加Bedroom 5上限限制，其他3上限限制）
   function changeCount(type, delta) {
-    if (roomCounts[type] + delta >= 0) {
-      roomCounts[type] += delta;
-      document.getElementById(`count-${type}`).innerText = roomCounts[type];
+    const maxLimit = (type === 'bedroom') ? 5 : 3;
+    const newCount = roomCounts[type] + delta;
+    if (newCount >= 0 && newCount <= maxLimit) {
+      roomCounts[type] = newCount;
+      document.getElementById(`count-${type}`).innerText = newCount;
     }
   }
 
   function showFormView() {
+    resetRoomCounts(); // 打开新建页面时重置数量
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('form-view').classList.add('active');
   }
@@ -377,6 +403,10 @@
 
   function renderRoomSelection() {
     const container = document.getElementById('allocated-rooms-container');
+    if (currentConfiguredRooms.length === 0) {
+      container.innerHTML = '<div class="empty-state">No rooms configured.<br>Tap Next to proceed.</div>';
+      return;
+    }
     container.innerHTML = currentConfiguredRooms.map((room, idx) => `
       <div class="record-item" onclick="openRoomInspection(${idx})">
         <div>
@@ -529,10 +559,11 @@
     saveRecords(records);
 
     document.getElementById('inspection-form').reset();
+    resetRoomCounts();
     showListView();
   }
 
-  /* ---------------- PDF EXPORT RENDER LOGIC ---------------- */
+  /* ---------------- PDF EXPORT RENDER LOGIC (WIDTH OPTIMIZED) ---------------- */
   function exportPDF(event, index) {
     event.stopPropagation();
     const records = getRecords();
@@ -540,9 +571,9 @@
     const printContainer = document.getElementById('print-template');
 
     let roomsHtml = data.rooms.map(r => `
-      <div style="margin-top:10px; font-weight:bold; background:#e9ecef; padding:3px 6px;">ROOM: ${r.name.toUpperCase()}</div>
+      <div style="margin-top:8px; font-weight:bold; background:#f2f2f2; padding:2px 4px; font-size:11px;">ROOM: ${r.name.toUpperCase()}</div>
       <table class="pdf-table">
-        <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
+        <tr><th class="pdf-col-item">ITEM</th><th class="pdf-col-status">STATUS</th><th class="pdf-col-comments">COMMENTS</th></tr>
         <tr><td>Floors</td><td>${r.details.floors.status}</td><td>${r.details.floors.comment || ''}</td></tr>
         <tr><td>Walls</td><td>${r.details.walls.status}</td><td>${r.details.walls.comment || ''}</td></tr>
         <tr><td>Ceilings</td><td>${r.details.ceilings.status}</td><td>${r.details.ceilings.comment || ''}</td></tr>
@@ -558,30 +589,41 @@
 
     printContainer.innerHTML = `
       <div class="pdf-header">RENT SUPPLEMENT PRE MOVE IN LANDLORD INSPECTION REPORT</div>
-      <table class="pdf-table">
-        <tr><td><b>RENT START DATE:</b> ${data.date || ''}</td><td><b>ADDRESS:</b> ${data.address || ''}</td></tr>
-        <tr><td><b>LANDLORD:</b> ${data.landlord || ''}</td><td><b>APT. NO.:</b> ${data.project || ''}</td></tr>
-        <tr><td><b>TENANT:</b> ${data.tenant || ''}</td><td><b>TOTAL UNITS:</b> ${data.units || ''}</td></tr>
+      
+      <!-- 优化后的地址栏，留出更大空间给 Address -->
+      <table class="pdf-info-table">
+        <tr>
+          <td class="pdf-info-col-left"><b>RENT START DATE:</b> ${data.date || ''}</td>
+          <td class="pdf-info-col-right"><b>ADDRESS:</b> ${data.address || ''}</td>
+        </tr>
+        <tr>
+          <td class="pdf-info-col-left"><b>LANDLORD:</b> ${data.landlord || ''}</td>
+          <td class="pdf-info-col-right"><b>APT. NO.:</b> ${data.project || ''}</td>
+        </tr>
+        <tr>
+          <td class="pdf-info-col-left"><b>TENANT:</b> ${data.tenant || ''}</td>
+          <td class="pdf-info-col-right"><b>TOTAL UNITS:</b> ${data.units || ''}</td>
+        </tr>
       </table>
 
-      <div style="font-weight:bold; margin-top:8px;">BUILDING CONDITION OVERVIEW</div>
-      <table class="pdf-table">
-        <tr><td>Appearance: ${data.appearance || 'N/A'}</td><td>Foundation: ${data.foundation || 'N/A'}</td></tr>
+      <div style="font-weight:bold; margin-top:6px; margin-bottom:2px; font-size:11px;">BUILDING CONDITION OVERVIEW</div>
+      <table class="pdf-info-table">
+        <tr><td style="width:50%;">Appearance: ${data.appearance || 'N/A'}</td><td style="width:50%;">Foundation: ${data.foundation || 'N/A'}</td></tr>
         <tr><td>Roof: ${data.roof || 'N/A'}</td><td>Walls: ${data.walls || 'N/A'}</td></tr>
         <tr><td>Parking: ${data.parking || 'N/A'}</td><td>Heating System: ${data.heating || 'N/A'}</td></tr>
       </table>
 
       ${roomsHtml}
 
-      <div style="margin-top:10px; font-weight:bold; background:#e9ecef; padding:3px 6px;">OTHERS & GENERAL FEATURES</div>
+      <div style="margin-top:8px; font-weight:bold; background:#f2f2f2; padding:2px 4px; font-size:11px;">OTHERS & GENERAL FEATURES</div>
       <table class="pdf-table">
-        <tr><th>Item</th><th>Status</th><th>Comments</th></tr>
+        <tr><th class="pdf-col-item">ITEM</th><th class="pdf-col-status">STATUS</th><th class="pdf-col-comments">COMMENTS</th></tr>
         ${othersHtml}
       </table>
 
-      <div style="margin-top:10px;"><b>OVERALL COMMENTS:</b> ${data.overallComments || 'None'}</div>
+      <div style="margin-top:8px; font-size:11px;"><b>OVERALL COMMENTS:</b> ${data.overallComments || 'None'}</div>
 
-      <div style="margin-top:30px;" class="pdf-grid-2">
+      <div style="margin-top:25px;" class="pdf-grid-2">
         <div>
           <b>INSPECTED BY:</b> ${data.inspectedBy || ''}<br><br>
           <b>LANDLORD SIGNATURE:</b><br>
