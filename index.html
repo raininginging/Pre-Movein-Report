@@ -53,11 +53,11 @@
     .btn-counter { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
     .counter-value { font-size: 1rem; font-weight: 600; min-width: 20px; text-align: center; }
 
-    /* Inline Item Row: Name -> Satisfactory Select -> Comment */
+    /* Inline Item Row Layout: Name -> Satisfactory -> Comment */
     .inline-item-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
     .inline-item-row:last-child { border-bottom: none; }
     .inline-item-name { width: 130px; font-weight: 500; font-size: 0.85rem; flex-shrink: 0; }
-    .inline-item-select { width: 120px; padding: 6px 4px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--border-color); background: #fff; flex-shrink: 0; }
+    .inline-item-select { width: 115px; padding: 6px 4px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--border-color); background: #fff; flex-shrink: 0; }
     .inline-item-comment { flex: 1; padding: 6px 8px; font-size: 0.85rem; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; }
     .inline-item-comment:focus { background: #fff; border-color: var(--primary-color); }
 
@@ -78,7 +78,7 @@
     </div>
   </div>
 
-  <!-- VIEW 2: New Inspection Setup -->
+  <!-- VIEW 2: New Inspection General Info & Setup -->
   <div id="form-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showListView()">Cancel</button>
@@ -104,24 +104,12 @@
           </div>
         </div>
         <div class="grid-2">
-          <div class="form-group">
-            <label>LANDLORD</label>
-            <input type="text" id="inp-landlord">
-          </div>
-          <div class="form-group">
-            <label>TENANT</label>
-            <input type="text" id="inp-tenant">
-          </div>
+          <div class="form-group"><label>LANDLORD</label><input type="text" id="inp-landlord"></div>
+          <div class="form-group"><label>TENANT</label><input type="text" id="inp-tenant"></div>
         </div>
         <div class="grid-2">
-          <div class="form-group">
-            <label>AGE</label>
-            <input type="text" id="inp-age" placeholder="e.g. 10 years">
-          </div>
-          <div class="form-group">
-            <label>TOTAL NO. OF UNITS</label>
-            <input type="number" id="inp-units">
-          </div>
+          <div class="form-group"><label>AGE</label><input type="text" id="inp-age" placeholder="e.g. 10 years"></div>
+          <div class="form-group"><label>TOTAL NO. OF UNITS</label><input type="number" id="inp-units"></div>
         </div>
       </div>
 
@@ -155,7 +143,7 @@
     </form>
   </div>
 
-  <!-- VIEW 3: Allocated Room Selection & Other General Inspection -->
+  <!-- VIEW 3: Room Selection & OTHERS General Checklist -->
   <div id="room-list-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showFormView()">Back</button>
@@ -164,27 +152,34 @@
     </div>
     
     <div style="padding-top: 16px;">
-      <!-- Section A: Room Checklist -->
-      <div class="section-title">Rooms Inspection</div>
+      <!-- PART 1: ROOMS -->
+      <div class="section-title">Select Rooms to Inspect</div>
       <div class="record-list" id="allocated-rooms-container"></div>
 
-      <!-- Section B: OTHERS Inspection (General Property Features) -->
+      <!-- PART 2: OTHERS (Mandatory Inspection List) -->
       <div class="section-title" style="margin-top: 24px;">OTHERS (General Features)</div>
-      <div class="form-card" id="others-checklist-container">
-        <!-- Generates Windows, Doors, Storage, Hot Water Tank, Weather Stripping etc. -->
+      <div class="form-card">
+        <div class="inline-item-row"><span class="inline-item-name">Windows</span><select class="inline-item-select" data-gen="Windows-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Windows-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Exterior Doors</span><select class="inline-item-select" data-gen="Exterior Doors-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Exterior Doors-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Interior Appearances</span><select class="inline-item-select" data-gen="Interior Appearances-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Interior Appearances-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Storage Space</span><select class="inline-item-select" data-gen="Storage Space-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Storage Space-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Washer & Dryer Hook-up</span><select class="inline-item-select" data-gen="Washer & Dryer Hook-up-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Washer & Dryer Hook-up-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Hot Water Tank Location</span><select class="inline-item-select" data-gen="Hot Water Tank Location-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Hot Water Tank Location-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Screens</span><select class="inline-item-select" data-gen="Screens-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Screens-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Weather Stripping</span><select class="inline-item-select" data-gen="Weather Stripping-status"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" class="inline-item-comment" data-gen="Weather Stripping-comment" placeholder="Comment..."></div>
       </div>
 
-      <!-- Section C: Overall Comments -->
+      <!-- PART 3: OVERALL COMMENTS -->
       <div class="section-title">OVERALL COMMENTS</div>
       <div class="form-card">
-        <textarea id="overall-comments" rows="3" placeholder="General comments for the entire property..."></textarea>
+        <textarea id="overall-comments" rows="3" placeholder="General comments for the whole property..."></textarea>
       </div>
 
       <button type="button" class="btn-action" onclick="saveCompleteRecord()">Save Record</button>
     </div>
   </div>
 
-  <!-- VIEW 4: Room Inspection Detail -->
+  <!-- VIEW 4: Room Detail Inspection View -->
   <div id="room-detail-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="saveAndBackToRooms()">‹ Back</button>
@@ -195,41 +190,13 @@
     <div style="padding-top: 16px;">
       <div class="section-title">FINISH (Interior)</div>
       <div class="form-card">
-        <!-- Floors -->
-        <div class="inline-item-row">
-          <span class="inline-item-name">Floors</span>
-          <select id="item-floors-status" class="inline-item-select">
-            <option value="Satisfactory">Satisfactory</option>
-            <option value="Unsatisfactory">Unsatisfactory</option>
-          </select>
-          <input type="text" id="item-floors-comment" class="inline-item-comment" placeholder="Comment...">
-        </div>
-
-        <!-- Walls -->
-        <div class="inline-item-row">
-          <span class="inline-item-name">Walls</span>
-          <select id="item-walls-status" class="inline-item-select">
-            <option value="Satisfactory">Satisfactory</option>
-            <option value="Unsatisfactory">Unsatisfactory</option>
-          </select>
-          <input type="text" id="item-walls-comment" class="inline-item-comment" placeholder="Comment...">
-        </div>
-
-        <!-- Ceilings -->
-        <div class="inline-item-row">
-          <span class="inline-item-name">Ceilings</span>
-          <select id="item-ceilings-status" class="inline-item-select">
-            <option value="Satisfactory">Satisfactory</option>
-            <option value="Unsatisfactory">Unsatisfactory</option>
-          </select>
-          <input type="text" id="item-ceilings-comment" class="inline-item-comment" placeholder="Comment...">
-        </div>
+        <div class="inline-item-row"><span class="inline-item-name">Floors</span><select id="item-floors-status" class="inline-item-select"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" id="item-floors-comment" class="inline-item-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Walls</span><select id="item-walls-status" class="inline-item-select"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" id="item-walls-comment" class="inline-item-comment" placeholder="Comment..."></div>
+        <div class="inline-item-row"><span class="inline-item-name">Ceilings</span><select id="item-ceilings-status" class="inline-item-select"><option>Satisfactory</option><option>Unsatisfactory</option></select><input type="text" id="item-ceilings-comment" class="inline-item-comment" placeholder="Comment..."></div>
       </div>
 
       <div class="section-title">OTHER FIXTURES & ITEMS</div>
-      <div class="form-card" id="dynamic-other-container">
-        <!-- Dynamic Items rendered here -->
-      </div>
+      <div class="form-card" id="dynamic-other-container"></div>
 
       <div class="section-title">ROOM COMMENTS</div>
       <div class="form-card">
@@ -248,7 +215,6 @@
 
   document.getElementById('inp-date').valueAsDate = new Date();
 
-  // 1. 各房间类型的专属检查项 Schema
   const roomCategorySchemas = {
     kitchen: ["Cupboards", "Fixtures", "Switches/Plugs", "Range Plug", "Range Hood", "Appliances Inc."],
     bath: ["Showerhead", "Exhaust Fan", "Light Fixtures", "Shower Rod"],
@@ -261,18 +227,6 @@
     garage: ["Doors", "Light Fixtures", "Switches/Plugs"],
     shed: ["Doors", "Locks"]
   };
-
-  // 2. 原文档中的全局 "OTHERS" 检查项清单
-  const generalOthersSchema = [
-    "Windows",
-    "Exterior Doors",
-    "Interior Appearances",
-    "Storage Space",
-    "Washer & Dryer Hook-up",
-    "Hot Water Tank Location",
-    "Screens",
-    "Weather Stripping"
-  ];
 
   function getRecords() { return JSON.parse(localStorage.getItem('inspection_records') || '[]'); }
   function saveRecords(records) { localStorage.setItem('inspection_records', JSON.stringify(records)); }
@@ -345,8 +299,6 @@
     });
 
     renderRoomSelection();
-    renderGeneralOthersChecklist();
-
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('room-list-view').classList.add('active');
   }
@@ -362,21 +314,6 @@
           </div>
         </div>
         <span style="color:var(--primary-color); font-weight: 500;">Inspect ›</span>
-      </div>
-    `).join('');
-  }
-
-  // 动态渲染全局 OTHERS 检查项列表
-  function renderGeneralOthersChecklist() {
-    const container = document.getElementById('others-checklist-container');
-    container.innerHTML = generalOthersSchema.map(itemKey => `
-      <div class="inline-item-row">
-        <span class="inline-item-name">${itemKey}</span>
-        <select class="inline-item-select" data-gen-other-key="${itemKey}" data-type="status">
-          <option value="Satisfactory">Satisfactory</option>
-          <option value="Unsatisfactory">Unsatisfactory</option>
-        </select>
-        <input type="text" class="inline-item-comment" data-gen-other-key="${itemKey}" data-type="comment" placeholder="Comment...">
       </div>
     `).join('');
   }
@@ -453,16 +390,17 @@
   }
 
   function saveCompleteRecord() {
-    // 收集全局 OTHERS 检查数据
+    const generalOthersKeys = [
+      "Windows", "Exterior Doors", "Interior Appearances", "Storage Space",
+      "Washer & Dryer Hook-up", "Hot Water Tank Location", "Screens", "Weather Stripping"
+    ];
+    
     const generalOthersData = {};
-    generalOthersSchema.forEach(key => {
-      const statusEl = document.querySelector(`select[data-gen-other-key="${key}"][data-type="status"]`);
-      const commentEl = document.querySelector(`input[data-gen-other-key="${key}"][data-type="comment"]`);
+    generalOthersKeys.forEach(key => {
+      const statusEl = document.querySelector(`select[data-gen="${key}-status"]`);
+      const commentEl = document.querySelector(`input[data-gen="${key}-comment"]`);
       if (statusEl && commentEl) {
-        generalOthersData[key] = {
-          status: statusEl.value,
-          comment: commentEl.value
-        };
+        generalOthersData[key] = { status: statusEl.value, comment: commentEl.value };
       }
     });
 
