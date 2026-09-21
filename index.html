@@ -67,21 +67,22 @@
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
 
-    /* ---------------- UNDERLINE / NO-BORDER PRINT STYLING ---------------- */
+    /* ---------------- UNDERLINE / NO-BORDER PRINT STYLING (OPTIMIZED SPACING) ---------------- */
     #print-template { display: none; background: white; padding: 25px; color: #000; font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; line-height: 1.5; }
     .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
     
     .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 15px; }
-    .pdf-underline { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; min-width: 120px; word-break: break-all; }
+    .pdf-underline { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; min-width: 100px; word-break: break-all; }
     .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
 
     .pdf-section-head { font-weight: bold; margin-top: 15px; margin-bottom: 6px; text-transform: uppercase; font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 2px; }
 
+    /* 优化列宽比例：收紧 Item 和 Status，留出大幅空间给 Comments，消除中间大片留空 */
     .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 4px; color: #333; }
     .pdf-row-item { display: flex; align-items: baseline; font-size: 11px; margin-bottom: 5px; }
-    .pdf-col-1 { width: 30%; font-weight: 500; }
-    .pdf-col-2 { width: 22%; }
-    .pdf-col-3 { width: 48%; }
+    .pdf-col-1 { width: 22%; font-weight: 500; padding-right: 10px; }
+    .pdf-col-2 { width: 15%; padding-right: 15px; }
+    .pdf-col-3 { width: 63%; }
 
     .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
     .pdf-sig-img { width: 100%; max-height: 40px; object-fit: contain; border-bottom: 1px solid #000; }
@@ -285,7 +286,7 @@
     </div>
   </div>
 
-  <!-- VIEW 7: Printable Template (No Table Box Border, Underline Style) -->
+  <!-- VIEW 7: Printable Template (Optimized Width Spacing) -->
   <div id="print-template"></div>
 
 <script>
@@ -558,14 +559,14 @@
     showListView();
   }
 
-  /* ---------------- UNDERLINE PDF EXPORT RENDER LOGIC ---------------- */
+  /* ---------------- UNDERLINE PDF EXPORT RENDER LOGIC (COMPACT SPACING) ---------------- */
   function exportPDF(event, index) {
     event.stopPropagation();
     const records = getRecords();
     const data = records[index];
     const printContainer = document.getElementById('print-template');
 
-    // Render individual room items with Underline Style
+    // 渲染房间检查项
     let roomsHtml = data.rooms.map(r => `
       <div class="pdf-section-head">ROOM: ${r.name.toUpperCase()}</div>
       <div class="pdf-row-header">
@@ -597,7 +598,7 @@
       `).join('')}
     `).join('');
 
-    // Render General Others items with Underline Style
+    // 渲染 General Others 检查项
     let othersHtml = Object.keys(data.generalOthers || {}).map(k => `
       <div class="pdf-row-item">
         <div class="pdf-col-1">${k}</div>
@@ -609,7 +610,6 @@
     printContainer.innerHTML = `
       <div class="pdf-header">RENT SUPPLEMENT PRE MOVE IN LANDLORD INSPECTION REPORT</div>
       
-      <!-- General Header Information with Underlines -->
       <div class="pdf-info-block">
         <div><b>RENT START DATE:</b> <span class="pdf-underline">${data.date || ''}</span></div>
         <div><b>ADDRESS:</b> <span class="pdf-underline">${data.address || ''}</span></div>
