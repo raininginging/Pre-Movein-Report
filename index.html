@@ -32,6 +32,10 @@
     .record-item:last-child { border-bottom: none; }
     .record-title { font-size: 1rem; font-weight: 500; margin-bottom: 4px; color: #1c1c1e; }
     .record-subtitle { font-size: 0.85rem; color: var(--secondary-text); }
+    .record-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-export-sm { color: var(--primary-color); border: 1px solid var(--primary-color); background: #f0f7ff; font-weight: 600; font-size: 0.8rem; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+    .btn-delete-sm { color: #ff3b30; border: none; background: none; font-weight: 600; font-size: 0.85rem; padding: 5px 8px; cursor: pointer; }
+
     .status-badge { font-size: 0.8rem; padding: 4px 8px; border-radius: 12px; font-weight: 600; }
     .status-pending { background: #ffe3e3; color: #d63384; }
     .status-done { background: #d1e7dd; color: #0f5132; }
@@ -72,7 +76,6 @@
     .pdf-underline-fit { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline; }
     .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
 
-    /* Strict Alignment Header Class */
     .pdf-section-head-shaded { 
       background-color: #e9ecef; 
       font-weight: bold; 
@@ -341,9 +344,21 @@
           <div class="record-title">${item.address || 'Untitled Inspection'}</div>
           <div class="record-subtitle">${item.date || ''} ${item.project ? '· ' + item.project : ''}</div>
         </div>
-        <button style="color:#ff3b30;border:none;background:none;font-weight:600;padding:8px 12px;cursor:pointer;" onclick="deleteRecord(event, ${item.id})">Delete</button>
+        <div class="record-actions">
+          <button class="btn-export-sm" onclick="exportSingleRecord(event, ${item.id})">Export</button>
+          <button class="btn-delete-sm" onclick="deleteRecord(event, ${item.id})">Delete</button>
+        </div>
       </div>
     `).join('');
+  }
+
+  function exportSingleRecord(event, id) {
+    event.stopPropagation();
+    const records = getRecords();
+    const record = records.find(r => r.id === id);
+    if (record) {
+      triggerPDFPrint(record);
+    }
   }
 
   function createNewRecord() {
