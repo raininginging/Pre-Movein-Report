@@ -18,7 +18,7 @@
     
     /* Navigation Bar */
     .nav-bar { position: sticky; top: 0; background: #f9f9f9; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; z-index: 100; }
-    .nav-bar .btn-nav { color: var(--primary-color); font-size: 1rem; background: none; border: none; cursor: pointer; font-weight: 500; }
+    .nav-bar .btn-nav { color: var(--primary-color); font-size: 1rem; background: none; border: border: none; cursor: pointer; font-weight: 500; }
     .nav-bar .title { font-weight: 600; font-size: 1.1rem; }
     .nav-bar .btn-add { font-size: 1.5rem; line-height: 1; }
 
@@ -67,22 +67,27 @@
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
 
-    /* ---------------- UNDERLINE / NO-BORDER PRINT STYLING (OPTIMIZED SPACING) ---------------- */
+    /* ---------------- PRINT STYLING (FIXED ALIGNMENT & SHADING) ---------------- */
     #print-template { display: none; background: white; padding: 25px; color: #000; font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; line-height: 1.5; }
     .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
     
     .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 15px; }
-    .pdf-underline { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; min-width: 100px; word-break: break-all; }
+    
+    /* 自适应下划线：文字多长线多长，只包包裹文字 */
+    .pdf-underline-fit { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline; }
+    /* 全宽固长下划线：Comments 用 */
     .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
 
-    .pdf-section-head { font-weight: bold; margin-top: 15px; margin-bottom: 6px; text-transform: uppercase; font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 2px; }
+    /* 阴影大标题：淡灰背景、无线 */
+    .pdf-section-head-shaded { background-color: #e9ecef; font-weight: bold; margin-top: 15px; margin-bottom: 8px; text-transform: uppercase; font-size: 12px; padding: 4px 8px; border-radius: 2px; }
 
-    /* 优化列宽比例：收紧 Item 和 Status，留出大幅空间给 Comments，消除中间大片留空 */
-    .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 4px; color: #333; }
-    .pdf-row-item { display: flex; align-items: baseline; font-size: 11px; margin-bottom: 5px; }
-    .pdf-col-1 { width: 22%; font-weight: 500; padding-right: 10px; }
-    .pdf-col-2 { width: 15%; padding-right: 15px; }
-    .pdf-col-3 { width: 63%; }
+    .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 6px; color: #333; }
+    
+    /* 解决基线对齐：align-items: flex-end */
+    .pdf-row-item { display: flex; align-items: flex-end; font-size: 11px; margin-bottom: 6px; height: 22px; }
+    .pdf-col-1 { width: 22%; font-weight: 500; padding-right: 10px; padding-bottom: 2px; }
+    .pdf-col-2 { width: 18%; padding-right: 15px; }
+    .pdf-col-3 { width: 60%; }
 
     .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
     .pdf-sig-img { width: 100%; max-height: 40px; object-fit: contain; border-bottom: 1px solid #000; }
@@ -286,7 +291,7 @@
     </div>
   </div>
 
-  <!-- VIEW 7: Printable Template (Optimized Width Spacing) -->
+  <!-- VIEW 7: Printable Template -->
   <div id="print-template"></div>
 
 <script>
@@ -559,16 +564,22 @@
     showListView();
   }
 
-  /* ---------------- UNDERLINE PDF EXPORT RENDER LOGIC (COMPACT SPACING) ---------------- */
+  /* ---------------- UNDERLINE PDF EXPORT RENDER LOGIC ---------------- */
+  // 辅助函数：如果为空则显示 N/A
+  function renderVal(val) {
+    if (!val || val.trim() === '') return 'N/A';
+    return `<span class="pdf-underline-fit">${val}</span>`;
+  }
+
   function exportPDF(event, index) {
     event.stopPropagation();
     const records = getRecords();
     const data = records[index];
     const printContainer = document.getElementById('print-template');
 
-    // 渲染房间检查项
+    // 渲染各个房间检查项（带灰背景阴影大标题、自适应下划线、状态与评语水平基线严格对齐）
     let roomsHtml = data.rooms.map(r => `
-      <div class="pdf-section-head">ROOM: ${r.name.toUpperCase()}</div>
+      <div class="pdf-section-head-shaded">ROOM: ${r.name.toUpperCase()}</div>
       <div class="pdf-row-header">
         <div class="pdf-col-1">Item</div>
         <div class="pdf-col-2">Status</div>
@@ -576,23 +587,23 @@
       </div>
       <div class="pdf-row-item">
         <div class="pdf-col-1">Floors</div>
-        <div class="pdf-col-2"><span class="pdf-underline">${r.details.floors.status}</span></div>
+        <div class="pdf-col-2"><span class="pdf-underline-fit">${r.details.floors.status}</span></div>
         <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.floors.comment || ''}</span></div>
       </div>
       <div class="pdf-row-item">
         <div class="pdf-col-1">Walls</div>
-        <div class="pdf-col-2"><span class="pdf-underline">${r.details.walls.status}</span></div>
+        <div class="pdf-col-2"><span class="pdf-underline-fit">${r.details.walls.status}</span></div>
         <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.walls.comment || ''}</span></div>
       </div>
       <div class="pdf-row-item">
         <div class="pdf-col-1">Ceilings</div>
-        <div class="pdf-col-2"><span class="pdf-underline">${r.details.ceilings.status}</span></div>
+        <div class="pdf-col-2"><span class="pdf-underline-fit">${r.details.ceilings.status}</span></div>
         <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.ceilings.comment || ''}</span></div>
       </div>
       ${Object.keys(r.details.others).map(k => `
         <div class="pdf-row-item">
           <div class="pdf-col-1">${k}</div>
-          <div class="pdf-col-2"><span class="pdf-underline">${r.details.others[k].status}</span></div>
+          <div class="pdf-col-2"><span class="pdf-underline-fit">${r.details.others[k].status}</span></div>
           <div class="pdf-col-3"><span class="pdf-underline-full">${r.details.others[k].comment || ''}</span></div>
         </div>
       `).join('')}
@@ -602,7 +613,7 @@
     let othersHtml = Object.keys(data.generalOthers || {}).map(k => `
       <div class="pdf-row-item">
         <div class="pdf-col-1">${k}</div>
-        <div class="pdf-col-2"><span class="pdf-underline">${data.generalOthers[k].status}</span></div>
+        <div class="pdf-col-2"><span class="pdf-underline-fit">${data.generalOthers[k].status}</span></div>
         <div class="pdf-col-3"><span class="pdf-underline-full">${data.generalOthers[k].comment || ''}</span></div>
       </div>
     `).join('');
@@ -610,28 +621,30 @@
     printContainer.innerHTML = `
       <div class="pdf-header">RENT SUPPLEMENT PRE MOVE IN LANDLORD INSPECTION REPORT</div>
       
+      <!-- 基础数据：无填写显 N/A，有填写下划线自适应文字宽度 -->
       <div class="pdf-info-block">
-        <div><b>RENT START DATE:</b> <span class="pdf-underline">${data.date || ''}</span></div>
-        <div><b>ADDRESS:</b> <span class="pdf-underline">${data.address || ''}</span></div>
-        <div><b>LANDLORD:</b> <span class="pdf-underline">${data.landlord || ''}</span></div>
-        <div><b>APT. NO.:</b> <span class="pdf-underline">${data.project || ''}</span></div>
-        <div><b>TENANT:</b> <span class="pdf-underline">${data.tenant || ''}</span></div>
-        <div><b>TOTAL UNITS:</b> <span class="pdf-underline">${data.units || ''}</span></div>
+        <div><b>RENT START DATE:</b> ${renderVal(data.date)}</div>
+        <div><b>ADDRESS:</b> ${renderVal(data.address)}</div>
+        <div><b>LANDLORD:</b> ${renderVal(data.landlord)}</div>
+        <div><b>APT. NO.:</b> ${renderVal(data.project)}</div>
+        <div><b>TENANT:</b> ${renderVal(data.tenant)}</div>
+        <div><b>TOTAL UNITS:</b> ${renderVal(data.units)}</div>
       </div>
 
-      <div class="pdf-section-head">BUILDING CONDITION OVERVIEW</div>
+      <!-- 带阴影灰背景的大标题 -->
+      <div class="pdf-section-head-shaded">BUILDING CONDITION OVERVIEW</div>
       <div class="pdf-info-block" style="margin-bottom:10px;">
-        <div>Appearance: <span class="pdf-underline">${data.appearance || 'N/A'}</span></div>
-        <div>Foundation: <span class="pdf-underline">${data.foundation || 'N/A'}</span></div>
-        <div>Roof: <span class="pdf-underline">${data.roof || 'N/A'}</span></div>
-        <div>Walls: <span class="pdf-underline">${data.walls || 'N/A'}</span></div>
-        <div>Parking: <span class="pdf-underline">${data.parking || 'N/A'}</span></div>
-        <div>Heating System: <span class="pdf-underline">${data.heating || 'N/A'}</span></div>
+        <div>Appearance: ${renderVal(data.appearance)}</div>
+        <div>Foundation: ${renderVal(data.foundation)}</div>
+        <div>Roof: ${renderVal(data.roof)}</div>
+        <div>Walls: ${renderVal(data.walls)}</div>
+        <div>Parking: ${renderVal(data.parking)}</div>
+        <div>Heating System: ${renderVal(data.heating)}</div>
       </div>
 
       ${roomsHtml}
 
-      <div class="pdf-section-head">OTHER ITEMS</div>
+      <div class="pdf-section-head-shaded">OTHER ITEMS</div>
       <div class="pdf-row-header">
         <div class="pdf-col-1">Item</div>
         <div class="pdf-col-2">Status</div>
@@ -646,12 +659,12 @@
 
       <div class="pdf-sig-grid">
         <div>
-          <b>INSPECTED BY:</b> <span class="pdf-underline">${data.inspectedBy || ''}</span><br><br>
+          <b>INSPECTED BY:</b> ${renderVal(data.inspectedBy)}<br><br>
           <b>LANDLORD SIGNATURE:</b><br>
           ${data.landlordSig ? `<img src="${data.landlordSig}" class="pdf-sig-img">` : '<div class="pdf-underline-full" style="margin-top:20px;"></div>'}
         </div>
         <div>
-          <b>DATE:</b> <span class="pdf-underline">${data.inspectionDate || ''}</span><br><br>
+          <b>DATE:</b> ${renderVal(data.inspectionDate)}<br><br>
           <b>TENANT SIGNATURE:</b><br>
           ${data.tenantSig ? `<img src="${data.tenantSig}" class="pdf-sig-img">` : '<div class="pdf-underline-full" style="margin-top:20px;"></div>'}
         </div>
