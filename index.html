@@ -72,7 +72,7 @@
     /* ---------------- PRINT STYLING (STRICTLY ALIGNED) ---------------- */
     #print-template { display: none; background: white; padding: 25px; color: #000; font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; line-height: 1.5; }
     .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 15px; }
+    .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 15px; padding: 0 8px; }
     .pdf-underline-fit { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline; }
     .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
 
@@ -95,7 +95,7 @@
     .pdf-col-2 { width: 20%; padding-right: 15px; }
     .pdf-col-3 { width: 55%; }
 
-    .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 25px; }
+    .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 25px; padding: 0 8px; }
 
     @media print {
       body * { visibility: hidden; }
@@ -712,12 +712,12 @@
 
       <div class="pdf-section-head-shaded">BUILDING CONDITION OVERVIEW</div>
       <div class="pdf-info-block" style="margin-bottom:10px;">
-        <div>Appearance: ${renderVal(data.appearance)}</div>
-        <div>Foundation: ${renderVal(data.foundation)}</div>
-        <div>Roof: ${renderVal(data.roof)}</div>
-        <div>Walls: ${renderVal(data.walls)}</div>
-        <div>Parking: ${renderVal(data.parking)}</div>
-        <div>Heating System: ${renderVal(data.heating)}</div>
+        <div><b>APPEARANCE:</b> ${renderVal(data.appearance)}</div>
+        <div><b>FOUNDATION:</b> ${renderVal(data.foundation)}</div>
+        <div><b>ROOF:</b> ${renderVal(data.roof)}</div>
+        <div><b>WALLS:</b> ${renderVal(data.walls)}</div>
+        <div><b>PARKING:</b> ${renderVal(data.parking)}</div>
+        <div><b>HEATING SYSTEM:</b> ${renderVal(data.heating)}</div>
       </div>
 
       ${roomsHtml}
@@ -735,7 +735,7 @@
         <div class="pdf-underline-full" style="margin-top:5px;">${data.overallComments || ''}</div>
       </div>
 
-      <div class="pdf-sig-grid" style="padding: 0 8px;">
+      <div class="pdf-sig-grid">
         <div>
           <b>INSPECTED BY:</b> ${renderVal(data.inspectedBy)}<br><br>
           <b>LANDLORD SIGNATURE:</b> ${renderVal(data.landlordSig)}
