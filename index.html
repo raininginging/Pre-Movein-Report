@@ -18,7 +18,7 @@
     
     /* Navigation Bar */
     .nav-bar { position: sticky; top: 0; background: #f9f9f9; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; z-index: 100; }
-    .nav-bar .btn-nav { color: var(--primary-color); font-size: 1rem; background: none; border: border: none; cursor: pointer; font-weight: 500; }
+    .nav-bar .btn-nav { color: var(--primary-color); font-size: 1rem; background: none; border: none; cursor: pointer; font-weight: 500; }
     .nav-bar .title { font-weight: 600; font-size: 1.1rem; }
     .nav-bar .btn-add { font-size: 1.5rem; line-height: 1; }
 
@@ -67,23 +67,33 @@
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
 
-    /* ---------------- PRINT STYLING (FIXED ALIGNMENT & SHADING) ---------------- */
+    /* ---------------- PRINT STYLING (PERFECT ALIGNMENT) ---------------- */
     #print-template { display: none; background: white; padding: 25px; color: #000; font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; line-height: 1.5; }
     .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
     
     .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 15px; }
     
-    /* 自适应下划线：文字多长线多长，只包包裹文字 */
+    /* 自适应下划线：包包裹文字（包含 N/A） */
     .pdf-underline-fit { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline; }
     /* 全宽固长下划线：Comments 用 */
     .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
 
-    /* 阴影大标题：淡灰背景、无线 */
-    .pdf-section-head-shaded { background-color: #e9ecef; font-weight: bold; margin-top: 15px; margin-bottom: 8px; text-transform: uppercase; font-size: 12px; padding: 4px 8px; border-radius: 2px; }
+    /* 阴影大标题：统一 6px 内边距，确保文字与正文严格边缘对齐 */
+    .pdf-section-head-shaded { 
+      background-color: #e9ecef; 
+      font-weight: bold; 
+      margin-top: 15px; 
+      margin-bottom: 10px; 
+      text-transform: uppercase; 
+      font-size: 12px; 
+      padding: 6px; 
+      border-radius: 2px;
+      width: 100%;
+    }
 
     .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 6px; color: #333; }
     
-    /* 解决基线对齐：align-items: flex-end */
+    /* 水平基线完全对齐 */
     .pdf-row-item { display: flex; align-items: flex-end; font-size: 11px; margin-bottom: 6px; height: 22px; }
     .pdf-col-1 { width: 22%; font-weight: 500; padding-right: 10px; padding-bottom: 2px; }
     .pdf-col-2 { width: 18%; padding-right: 15px; }
@@ -564,11 +574,11 @@
     showListView();
   }
 
-  /* ---------------- UNDERLINE PDF EXPORT RENDER LOGIC ---------------- */
-  // 辅助函数：如果为空则显示 N/A
+  /* ---------------- UNDERLINE & ALIGNMENT PDF RENDER LOGIC ---------------- */
+  // 辅助函数：无论有内容还是 N/A，统一给文字包裹下划线
   function renderVal(val) {
-    if (!val || val.trim() === '') return 'N/A';
-    return `<span class="pdf-underline-fit">${val}</span>`;
+    const text = (!val || val.trim() === '') ? 'N/A' : val;
+    return `<span class="pdf-underline-fit">${text}</span>`;
   }
 
   function exportPDF(event, index) {
@@ -577,7 +587,7 @@
     const data = records[index];
     const printContainer = document.getElementById('print-template');
 
-    // 渲染各个房间检查项（带灰背景阴影大标题、自适应下划线、状态与评语水平基线严格对齐）
+    // 渲染房间检查项
     let roomsHtml = data.rooms.map(r => `
       <div class="pdf-section-head-shaded">ROOM: ${r.name.toUpperCase()}</div>
       <div class="pdf-row-header">
@@ -621,7 +631,7 @@
     printContainer.innerHTML = `
       <div class="pdf-header">RENT SUPPLEMENT PRE MOVE IN LANDLORD INSPECTION REPORT</div>
       
-      <!-- 基础数据：无填写显 N/A，有填写下划线自适应文字宽度 -->
+      <!-- 基础数据：写了 N/A 的也有自适应下划线 -->
       <div class="pdf-info-block">
         <div><b>RENT START DATE:</b> ${renderVal(data.date)}</div>
         <div><b>ADDRESS:</b> ${renderVal(data.address)}</div>
@@ -631,7 +641,7 @@
         <div><b>TOTAL UNITS:</b> ${renderVal(data.units)}</div>
       </div>
 
-      <!-- 带阴影灰背景的大标题 -->
+      <!-- 严格垂直左对齐的阴影大标题 -->
       <div class="pdf-section-head-shaded">BUILDING CONDITION OVERVIEW</div>
       <div class="pdf-info-block" style="margin-bottom:10px;">
         <div>Appearance: ${renderVal(data.appearance)}</div>
