@@ -66,19 +66,16 @@
     .btn-clear { background: #ff3b30; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; float: right; margin-top: 4px; }
 
     .btn-action { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
+    .btn-secondary { background: #34c759; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
+    .btn-group-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 
     /* ---------------- PRINT STYLING (PERFECT ALIGNMENT) ---------------- */
     #print-template { display: none; background: white; padding: 25px; color: #000; font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; line-height: 1.5; }
     .pdf-header { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-    
     .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 15px; }
-    
-    /* 自适应下划线：包包裹文字（包含 N/A） */
     .pdf-underline-fit { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline; }
-    /* 全宽固长下划线：Comments 用 */
     .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
 
-    /* 阴影大标题：统一 6px 内边距，确保文字与正文严格边缘对齐 */
     .pdf-section-head-shaded { 
       background-color: #e9ecef; 
       font-weight: bold; 
@@ -92,8 +89,6 @@
     }
 
     .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 6px; color: #333; }
-    
-    /* 水平基线完全对齐 */
     .pdf-row-item { display: flex; align-items: flex-end; font-size: 11px; margin-bottom: 6px; height: 22px; }
     .pdf-col-1 { width: 22%; font-weight: 500; padding-right: 10px; padding-bottom: 2px; }
     .pdf-col-2 { width: 18%; padding-right: 15px; }
@@ -106,7 +101,7 @@
       body * { visibility: hidden; }
       #print-template, #print-template * { visibility: visible; }
       #print-template { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
-      .nav-bar, .btn-action, .btn-clear { display: none !important; }
+      .nav-bar, .btn-action, .btn-clear, .btn-secondary, .btn-group-2 { display: none !important; }
     }
   </style>
 </head>
@@ -115,9 +110,8 @@
   <!-- VIEW 1: Inspection Record List (Home) -->
   <div id="list-view" class="view active">
     <div class="nav-bar">
-      <button class="btn-nav" id="btn-edit" onclick="toggleEditMode()">Edit</button>
-      <div class="title">Inspection Record</div>
-      <button class="btn-nav btn-add" onclick="showFormView()">+</button>
+      <div class="title" style="margin-left:auto;margin-right:auto;">Inspection Records</div>
+      <button class="btn-nav btn-add" onclick="createNewRecord()" style="position:absolute;right:16px;">+</button>
     </div>
     <div style="padding-top: 16px;">
       <div class="record-list" id="records-container"></div>
@@ -128,7 +122,7 @@
   <div id="form-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="showListView()">Cancel</button>
-      <div class="title">New Inspection</div>
+      <div class="title">General Info</div>
       <button class="btn-nav" onclick="goToStep2Rooms()">Next</button>
     </div>
 
@@ -229,7 +223,7 @@
         <textarea id="room-general-comments" rows="2" placeholder="Enter comments for this room..."></textarea>
       </div>
 
-      <button type="button" class="btn-action" onclick="saveAndBackToRooms()">Complete Room Inspection</button>
+      <button type="button" class="btn-action" onclick="saveAndBackToRooms()">Save Room Details</button>
     </div>
   </div>
 
@@ -260,7 +254,7 @@
         <textarea id="overall-comments" rows="3" placeholder="General comments for the whole property..."></textarea>
       </div>
 
-      <button type="button" class="btn-action" onclick="goToStep4Signatures()">Next: Signatures</button>
+      <button type="button" class="btn-action" onclick="goToStep4Signatures()">Next: Signatures & Export</button>
     </div>
   </div>
 
@@ -268,8 +262,8 @@
   <div id="signatures-view" class="view">
     <div class="nav-bar">
       <button class="btn-nav" onclick="backToStep3Others()">Back</button>
-      <div class="title">Signatures</div>
-      <button class="btn-nav" onclick="saveCompleteRecord()">Finish</button>
+      <div class="title">Signatures & Save</div>
+      <button class="btn-nav" onclick="saveRecord(false)">Save</button>
     </div>
 
     <div style="padding-top: 16px;">
@@ -297,7 +291,10 @@
         <button type="button" class="btn-clear" onclick="clearCanvas('canvas-tenant')">Clear</button>
       </div>
 
-      <button type="button" class="btn-action" onclick="saveCompleteRecord()">Finish & Save Record</button>
+      <div class="btn-group-2">
+        <button type="button" class="btn-secondary" onclick="saveRecord(false)">Save Record</button>
+        <button type="button" class="btn-action" onclick="saveRecord(true)">Export PDF</button>
+      </div>
     </div>
   </div>
 
@@ -305,13 +302,10 @@
   <div id="print-template"></div>
 
 <script>
-  let isEditMode = false;
+  let currentEditingId = null; // 当前正在编辑的记录 ID，若为空则为新建
   let roomCounts = { kitchen: 0, dining: 0, bedroom: 0, bath: 0, living: 0, hallway: 0, basement: 0, stairs: 0, garage: 0, shed: 0 };
   let currentConfiguredRooms = [];
   let currentInspectingRoomIdx = null;
-
-  document.getElementById('inp-date').valueAsDate = new Date();
-  document.getElementById('inp-inspection-date').valueAsDate = new Date();
 
   const roomCategorySchemas = {
     kitchen: ["Cupboards", "Fixtures", "Switches/Plugs", "Range Plug", "Range Hood", "Appliances Inc."],
@@ -337,22 +331,94 @@
     });
   }
 
+  // 渲染首页列表：右侧为直接删除的红色按钮，点击文字进入编辑
   function renderList() {
     const records = getRecords();
     const container = document.getElementById('records-container');
     if (records.length === 0) {
-      container.innerHTML = '<div class="empty-state">No inspection records yet.<br>Tap + to create one.</div>';
+      container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--secondary-text);">No records found.<br>Tap + to start new inspection.</div>';
       return;
     }
-    container.innerHTML = records.map((item, index) => `
-      <div class="record-item" onclick="onItemClick(${index})">
+    container.innerHTML = records.map((item) => `
+      <div class="record-item" onclick="loadRecordForEdit(${item.id})">
         <div>
           <div class="record-title">${item.address || 'Untitled Inspection'}</div>
-          <div class="record-subtitle">${item.date} ${item.project ? '· ' + item.project : ''}</div>
+          <div class="record-subtitle">${item.date || ''} ${item.project ? '· ' + item.project : ''}</div>
         </div>
-        ${isEditMode ? `<button style="color:red;border:none;background:none;" onclick="deleteRecord(event, ${index})">Delete</button>` : '<button style="color:var(--primary-color);border:none;background:none;font-weight:bold;" onclick="exportPDF(event, ${index})">Export PDF</button>'}
+        <button style="color:#ff3b30;border:none;background:none;font-weight:600;padding:8px 12px;cursor:pointer;" onclick="deleteRecord(event, ${item.id})">Delete</button>
       </div>
     `).join('');
+  }
+
+  function createNewRecord() {
+    currentEditingId = null;
+    document.getElementById('inspection-form').reset();
+    document.getElementById('inp-date').valueAsDate = new Date();
+    document.getElementById('inp-inspection-date').valueAsDate = new Date();
+    document.getElementById('overall-comments').value = '';
+    resetRoomCounts();
+    clearCanvas('canvas-landlord');
+    clearCanvas('canvas-tenant');
+    currentConfiguredRooms = [];
+
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('form-view').classList.add('active');
+  }
+
+  // 点击列表，重新加载已有记录进行编辑调整
+  function loadRecordForEdit(id) {
+    const records = getRecords();
+    const data = records.find(r => r.id === id);
+    if (!data) return;
+
+    currentEditingId = id;
+
+    // 填回 Form 1
+    document.getElementById('inp-address').value = data.address || '';
+    document.getElementById('inp-project').value = data.project || '';
+    document.getElementById('inp-date').value = data.date || '';
+    document.getElementById('inp-landlord').value = data.landlord || '';
+    document.getElementById('inp-tenant').value = data.tenant || '';
+    document.getElementById('inp-age').value = data.age || '';
+    document.getElementById('inp-units').value = data.units || '';
+    document.getElementById('inp-appearance').value = data.appearance || '';
+    document.getElementById('inp-foundation').value = data.foundation || '';
+    document.getElementById('inp-roof').value = data.roof || '';
+    document.getElementById('inp-walls').value = data.walls || '';
+    document.getElementById('inp-parking').value = data.parking || '';
+    document.getElementById('inp-heating').value = data.heating || '';
+
+    // 还原房间 Counts & 数据
+    resetRoomCounts();
+    currentConfiguredRooms = data.rooms || [];
+    currentConfiguredRooms.forEach(r => {
+      if (roomCounts[r.categoryKey] !== undefined) {
+        roomCounts[r.categoryKey]++;
+        document.getElementById(`count-${r.categoryKey}`).innerText = roomCounts[r.categoryKey];
+      }
+    });
+
+    // 填回 General Others
+    const generalOthersKeys = [
+      "Windows", "Exterior Doors", "Interior Appearances", "Storage Space",
+      "Washer & Dryer Hook-up", "Hot Water Tank Location", "Screens", "Weather Stripping", "Smoke Detectors"
+    ];
+    generalOthersKeys.forEach(key => {
+      const statusEl = document.querySelector(`select[data-gen="${key}-status"]`);
+      const commentEl = document.querySelector(`input[data-gen="${key}-comment"]`);
+      if (data.generalOthers && data.generalOthers[key]) {
+        if (statusEl) statusEl.value = data.generalOthers[key].status || 'Satisfactory';
+        if (commentEl) commentEl.value = data.generalOthers[key].comment || '';
+      }
+    });
+
+    document.getElementById('overall-comments').value = data.overallComments || '';
+    document.getElementById('inp-inspected-by').value = data.inspectedBy || '';
+    document.getElementById('inp-inspection-date').value = data.inspectionDate || '';
+
+    // 显示编辑页面
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('form-view').classList.add('active');
   }
 
   function changeCount(type, delta) {
@@ -362,12 +428,6 @@
       roomCounts[type] = newCount;
       document.getElementById(`count-${type}`).innerText = newCount;
     }
-  }
-
-  function showFormView() {
-    resetRoomCounts();
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('form-view').classList.add('active');
   }
 
   function showListView() {
@@ -380,7 +440,8 @@
     const address = document.getElementById('inp-address').value;
     if (!address) { alert('Please fill in the Address / Title.'); return; }
 
-    currentConfiguredRooms = [];
+    // 如果是新建，生成房间列表；如果是编辑且未改动房间数量，则保留已有记录
+    let updatedRooms = [];
     const categories = [
       { key: 'kitchen', label: 'Kitchen' }, { key: 'dining', label: 'Dining Room' },
       { key: 'bedroom', label: 'Bedroom' }, { key: 'bath', label: 'Bathroom' },
@@ -392,21 +453,28 @@
     categories.forEach(cat => {
       const count = roomCounts[cat.key];
       for (let i = 1; i <= count; i++) {
-        currentConfiguredRooms.push({
-          categoryKey: cat.key,
-          name: count > 1 ? `${cat.label} ${i}` : cat.label,
-          status: 'Pending',
-          details: {
-            floors: { status: 'Satisfactory', comment: '' },
-            walls: { status: 'Satisfactory', comment: '' },
-            ceilings: { status: 'Satisfactory', comment: '' },
-            others: {},
-            generalComments: ''
-          }
-        });
+        const roomName = count > 1 ? `${cat.label} ${i}` : cat.label;
+        const existingRoom = currentConfiguredRooms.find(r => r.name === roomName && r.categoryKey === cat.key);
+        if (existingRoom) {
+          updatedRooms.push(existingRoom);
+        } else {
+          updatedRooms.push({
+            categoryKey: cat.key,
+            name: roomName,
+            status: 'Pending',
+            details: {
+              floors: { status: 'Satisfactory', comment: '' },
+              walls: { status: 'Satisfactory', comment: '' },
+              ceilings: { status: 'Satisfactory', comment: '' },
+              others: {},
+              generalComments: ''
+            }
+          });
+        }
       }
     });
 
+    currentConfiguredRooms = updatedRooms;
     renderRoomSelection();
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById('room-list-view').classList.add('active');
@@ -415,7 +483,7 @@
   function renderRoomSelection() {
     const container = document.getElementById('allocated-rooms-container');
     if (currentConfiguredRooms.length === 0) {
-      container.innerHTML = '<div class="empty-state">No rooms configured.<br>Tap Next to proceed.</div>';
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--secondary-text);">No rooms configured.<br>Tap Next to proceed.</div>';
       return;
     }
     container.innerHTML = currentConfiguredRooms.map((room, idx) => `
@@ -523,7 +591,8 @@
     document.getElementById('others-view').classList.add('active');
   }
 
-  function saveCompleteRecord() {
+  // 保存记录逻辑（支撑新建和修改覆写）
+  function saveRecord(triggerExport = false) {
     const generalOthersKeys = [
       "Windows", "Exterior Doors", "Interior Appearances", "Storage Space",
       "Washer & Dryer Hook-up", "Hot Water Tank Location", "Screens", "Weather Stripping", "Smoke Detectors"
@@ -541,8 +610,8 @@
     const landlordCanvas = document.getElementById('canvas-landlord');
     const tenantCanvas = document.getElementById('canvas-tenant');
 
-    const newRecord = {
-      id: Date.now(),
+    const recordData = {
+      id: currentEditingId || Date.now(),
       address: document.getElementById('inp-address').value,
       project: document.getElementById('inp-project').value,
       date: document.getElementById('inp-date').value,
@@ -565,29 +634,34 @@
       tenantSig: tenantCanvas ? tenantCanvas.toDataURL() : ''
     };
 
-    const records = getRecords();
-    records.unshift(newRecord);
+    let records = getRecords();
+    if (currentEditingId) {
+      // 覆写旧记录
+      const idx = records.findIndex(r => r.id === currentEditingId);
+      if (idx !== -1) records[idx] = recordData;
+    } else {
+      // 插入新记录
+      records.unshift(recordData);
+    }
     saveRecords(records);
 
-    document.getElementById('inspection-form').reset();
-    resetRoomCounts();
-    showListView();
+    if (triggerExport) {
+      triggerPDFPrint(recordData);
+    } else {
+      alert("Record Saved Successfully!");
+      showListView();
+    }
   }
 
-  /* ---------------- UNDERLINE & ALIGNMENT PDF RENDER LOGIC ---------------- */
-  // 辅助函数：无论有内容还是 N/A，统一给文字包裹下划线
+  /* ---------------- PDF PRINT RENDER LOGIC ---------------- */
   function renderVal(val) {
     const text = (!val || val.trim() === '') ? 'N/A' : val;
     return `<span class="pdf-underline-fit">${text}</span>`;
   }
 
-  function exportPDF(event, index) {
-    event.stopPropagation();
-    const records = getRecords();
-    const data = records[index];
+  function triggerPDFPrint(data) {
     const printContainer = document.getElementById('print-template');
 
-    // 渲染房间检查项
     let roomsHtml = data.rooms.map(r => `
       <div class="pdf-section-head-shaded">ROOM: ${r.name.toUpperCase()}</div>
       <div class="pdf-row-header">
@@ -619,7 +693,6 @@
       `).join('')}
     `).join('');
 
-    // 渲染 General Others 检查项
     let othersHtml = Object.keys(data.generalOthers || {}).map(k => `
       <div class="pdf-row-item">
         <div class="pdf-col-1">${k}</div>
@@ -631,7 +704,6 @@
     printContainer.innerHTML = `
       <div class="pdf-header">RENT SUPPLEMENT PRE MOVE IN LANDLORD INSPECTION REPORT</div>
       
-      <!-- 基础数据：写了 N/A 的也有自适应下划线 -->
       <div class="pdf-info-block">
         <div><b>RENT START DATE:</b> ${renderVal(data.date)}</div>
         <div><b>ADDRESS:</b> ${renderVal(data.address)}</div>
@@ -641,7 +713,6 @@
         <div><b>TOTAL UNITS:</b> ${renderVal(data.units)}</div>
       </div>
 
-      <!-- 严格垂直左对齐的阴影大标题 -->
       <div class="pdf-section-head-shaded">BUILDING CONDITION OVERVIEW</div>
       <div class="pdf-info-block" style="margin-bottom:10px;">
         <div>Appearance: ${renderVal(data.appearance)}</div>
@@ -684,27 +755,19 @@
     window.print();
   }
 
-  function toggleEditMode() {
-    isEditMode = !isEditMode;
-    document.getElementById('btn-edit').innerText = isEditMode ? 'Done' : 'Edit';
-    renderList();
-  }
-
-  function deleteRecord(event, index) {
+  function deleteRecord(event, id) {
     event.stopPropagation();
-    let records = getRecords();
-    records.splice(index, 1);
-    saveRecords(records);
-    renderList();
-  }
-
-  function onItemClick(index) {
-    if (isEditMode) return;
-    exportPDF({ stopPropagation: ()=>{} }, index);
+    if (confirm("Are you sure you want to delete this record?")) {
+      let records = getRecords();
+      records = records.filter(r => r.id !== id);
+      saveRecords(records);
+      renderList();
+    }
   }
 
   function initCanvas(id) {
     const canvas = document.getElementById(id);
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
@@ -724,6 +787,7 @@
 
   function clearCanvas(id) {
     const canvas = document.getElementById(id);
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
