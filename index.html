@@ -68,7 +68,7 @@
     .btn-secondary { background: #34c759; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
     .btn-group-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 
-    /* ---------------- PRINT & EXPORT STYLING ---------------- */
+    /* ---------------- PRINT & EXPORT STYLING (LEGAL SIZE: 8.5 x 14 in) ---------------- */
     #print-template { display: none; background: white; padding: 20px; color: #000; font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; line-height: 1.5; }
     .pdf-header { text-align: center; font-weight: bold; font-size: 14px; margin-bottom: 15px; text-transform: uppercase; }
     .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 15px; margin-bottom: 15px; padding: 0 4px; }
@@ -96,10 +96,22 @@
 
     .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; padding: 0 4px; }
 
+    /* 强制指定 Legal 尺寸页面设置 */
+    @page {
+      size: 8.5in 14in;
+      margin: 0.4in;
+    }
+
     @media print {
       body * { visibility: hidden; }
       #print-template, #print-template * { visibility: visible; }
-      #print-template { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+      #print-template { 
+        display: block !important; 
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+      }
       .nav-bar, .btn-action, .btn-secondary, .btn-group-2 { display: none !important; }
     }
   </style>
@@ -648,7 +660,7 @@
     }
   }
 
-  /* ---------------- MOBILE SHARE & PRINT HANDLER ---------------- */
+  /* ---------------- MOBILE SHARE & PRINT HANDLER (WITH LEGAL PAGE CONFIG) ---------------- */
   function renderVal(val) {
     const text = (!val || val.trim() === '') ? 'N/A' : val;
     return `<span class="pdf-underline-fit">${text}</span>`;
@@ -701,18 +713,22 @@
         <meta charset="UTF-8">
         <title>Inspection Report - ${data.address}</title>
         <style>
-          body { font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; padding: 20px; line-height: 1.5; color: #000; }
-          .pdf-header { text-align: center; font-weight: bold; font-size: 14px; margin-bottom: 15px; text-transform: uppercase; }
-          .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 15px; margin-bottom: 15px; }
+          @page {
+            size: 8.5in 14in;
+            margin: 0.4in;
+          }
+          body { font-family: "Courier New", Courier, monospace, sans-serif; font-size: 12px; padding: 10px; line-height: 1.4; color: #000; }
+          .pdf-header { text-align: center; font-weight: bold; font-size: 14px; margin-bottom: 12px; text-transform: uppercase; }
+          .pdf-info-block { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 15px; margin-bottom: 12px; }
           .pdf-underline-fit { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline; }
-          .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 18px; }
-          .pdf-section-head-shaded { background-color: #e9ecef; font-weight: bold; margin-top: 15px; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; padding: 6px 8px; }
-          .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 6px; }
-          .pdf-row-item { display: flex; align-items: flex-end; font-size: 11px; margin-bottom: 6px; }
+          .pdf-underline-full { border-bottom: 1px solid #000; padding-bottom: 1px; display: inline-block; width: 100%; min-height: 16px; }
+          .pdf-section-head-shaded { background-color: #e9ecef; font-weight: bold; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase; font-size: 11px; padding: 5px 8px; }
+          .pdf-row-header { display: flex; font-weight: bold; font-size: 11px; margin-bottom: 4px; }
+          .pdf-row-item { display: flex; align-items: flex-end; font-size: 11px; margin-bottom: 4px; }
           .pdf-col-1 { width: 30%; font-weight: 500; }
           .pdf-col-2 { width: 25%; }
           .pdf-col-3 { width: 45%; }
-          .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+          .pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         </style>
       </head>
       <body>
@@ -742,9 +758,9 @@
           <div class="pdf-col-3">Comments</div>
         </div>
         ${othersHtml}
-        <div style="margin-top:15px;">
+        <div style="margin-top:12px;">
           <b>OVERALL COMMENTS:</b>
-          <div class="pdf-underline-full" style="margin-top:5px;">${data.overallComments || ''}</div>
+          <div class="pdf-underline-full" style="margin-top:4px;">${data.overallComments || ''}</div>
         </div>
         <div class="pdf-sig-grid">
           <div>
@@ -766,7 +782,6 @@
     const fileName = `Inspection_${(data.address || 'Report').replace(/[^a-zA-Z0-9]/g, '_')}.html`;
     const file = new File([htmlContent], fileName, { type: 'text/html' });
 
-    // 优先调用手机系统的原生的分享功能（分享给邮箱/微信/存文件）
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
@@ -780,7 +795,6 @@
       }
     }
 
-    // 备用方案：如果设备不支持原生文件分享，则直接打印或提示下载
     const printContainer = document.getElementById('print-template');
     printContainer.innerHTML = htmlContent;
     window.print();
