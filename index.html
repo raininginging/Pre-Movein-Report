@@ -18,7 +18,7 @@
       padding-bottom: 80px;
     }
 
-    /* 顶部导航 */
+    /* 顶部导航栏 */
     .header {
       position: sticky;
       top: 0;
@@ -52,7 +52,7 @@
       text-align: center;
     }
 
-    /* 容器 */
+    /* 主容器 */
     .container {
       max-width: 600px;
       margin: 0 auto;
@@ -69,7 +69,7 @@
       letter-spacing: 0.5px;
     }
 
-    /* 卡片列表 */
+    /* 白盒卡片容器 */
     .checklist-card {
       background: #ffffff;
       border-radius: 12px;
@@ -78,85 +78,96 @@
       margin-bottom: 20px;
     }
 
-    /* 检查项（双层布局架构） */
+    /* 单个检查项网格：左边放（名称+下面的Comments），右边放下拉菜单 */
     .checklist-item {
-      padding: 14px 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid #e5e5ea;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .checklist-card .checklist-item:last-child {
-      border-bottom: none;
-    }
-
-    /* 上层：项目名称 + 状态下拉菜单 */
-    .item-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
     }
 
+    .checklist-card .checklist-item:last-child {
+      border-bottom: none;
+    }
+
+    /* 左侧区块：包含名称以及下方挪过来的 Comments 输入框 */
+    .item-left-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1; /* 占据左半部分绝大部分空间 */
+    }
+
     .item-title {
       font-size: 15px;
       font-weight: 600;
       color: #1c1c1e;
-      flex: 1;
-      line-height: 1.3;
+      line-height: 1.2;
     }
 
+    /* 从右边挪到名称下方的 Comments 输入框 */
+    .item-comment-input {
+      width: 100%;
+      max-width: 220px; /* 限制适中宽度，避免过长 */
+      padding: 6px 10px;
+      border: 1px solid #e5e5ea;
+      border-radius: 6px;
+      background-color: #fafafa;
+      font-size: 13px;
+      color: #1c1c1e;
+      outline: none;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .item-comment-input:focus {
+      background-color: #ffffff;
+      border-color: #007aff;
+      box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.12);
+    }
+
+    .item-comment-input::placeholder {
+      color: #c7c7cc;
+    }
+
+    /* 右侧：状态下拉菜单 */
     .item-select {
       appearance: none;
       -webkit-appearance: none;
       background-color: #ffffff;
       border: 1px solid #d1d1d6;
       border-radius: 8px;
-      padding: 6px 28px 6px 12px;
+      padding: 6px 26px 6px 10px;
       font-size: 14px;
       color: #1c1c1e;
       font-weight: 500;
+      white-space: nowrap;
       background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238E8E93%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
       background-repeat: no-repeat;
-      background-position: right 10px center;
+      background-position: right 8px center;
       background-size: 10px auto;
     }
 
-    /* 下层：Comments 输入框（占据整行、2行高度） */
-    .item-comment-box {
+    /* 总体备注区域 */
+    .overall-textarea {
       width: 100%;
-    }
-
-    .comment-textarea {
-      width: 100%;
-      height: 58px; /* 留出两行舒适的写入高度 */
+      height: 80px;
       padding: 8px 10px;
       border: 1px solid #e5e5ea;
       border-radius: 8px;
-      background-color: #f9f9fb;
+      background-color: #fafafa;
       font-size: 14px;
-      color: #1c1c1e;
       resize: none;
       outline: none;
-      transition: border-color 0.2s, background-color 0.2s;
     }
 
-    .comment-textarea:focus {
+    .overall-textarea:focus {
       background-color: #ffffff;
       border-color: #007aff;
-      box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15);
     }
 
-    .comment-textarea::placeholder {
-      color: #c7c7cc;
-    }
-
-    .overall-textarea {
-      height: 90px;
-    }
-
-    /* 底部悬浮操作按钮 */
+    /* 底部悬浮导出按钮栏 */
     .bottom-bar {
       position: fixed;
       bottom: 0;
@@ -182,14 +193,6 @@
       border: none;
       cursor: pointer;
       text-align: center;
-    }
-
-    .btn-secondary {
-      background-color: #e5e5ea;
-      color: #1c1c1e;
-    }
-
-    .btn-primary {
       background-color: #007aff;
       color: #ffffff;
     }
@@ -197,7 +200,7 @@
 </head>
 <body>
 
-  <!-- 头部导航 -->
+  <!-- 顶部导航栏 -->
   <div class="header">
     <button class="header-btn" id="prevBtn" onclick="changeSection(-1)">Back</button>
     <div class="header-title" id="pageTitle">Checklist</div>
@@ -207,23 +210,23 @@
   <div class="container">
     <div class="section-title" id="sectionHeader">Section Features</div>
     
-    <!-- 检查项列表 -->
+    <!-- 动态检查项列表卡片 -->
     <div class="checklist-card" id="checklistContainer"></div>
 
     <!-- 总体备注栏 -->
     <div class="section-title">Overall Comments</div>
     <div class="checklist-card" style="padding: 12px;">
-      <textarea id="overallComments" class="comment-textarea overall-textarea" placeholder="Add overall comments for this section..." onchange="saveCurrentSectionData()"></textarea>
+      <textarea id="overallComments" class="overall-textarea" placeholder="Add overall comments for this section..." onchange="saveCurrentSectionData()"></textarea>
     </div>
   </div>
 
-  <!-- 底部导出的悬浮工具栏 -->
+  <!-- 底部工具栏 -->
   <div class="bottom-bar">
-    <button class="action-btn btn-secondary" onclick="exportData()">导出数据 (JSON)</button>
+    <button class="action-btn" onclick="exportData()">导出检查报告 (JSON)</button>
   </div>
 
   <script>
-    // 检查表分类与模块数据定义
+    // 检查表数据结构配置
     const sections = [
       {
         id: "others",
@@ -257,10 +260,9 @@
     ];
 
     let currentSectionIndex = 0;
-    // 存储用户输入的响应数据
     let formData = {};
 
-    // 初始化表单数据结构
+    // 初始化保存数据的对象
     function initFormData() {
       sections.forEach(sec => {
         formData[sec.id] = {
@@ -276,51 +278,49 @@
       });
     }
 
-    // 渲染当前板块
+    // 渲染页面
     function renderSection() {
       const currentSec = sections[currentSectionIndex];
       
-      // 更新标题与导航状态
       document.getElementById("pageTitle").innerText = currentSec.title;
       document.getElementById("sectionHeader").innerText = currentSec.subtitle;
       document.getElementById("prevBtn").disabled = currentSectionIndex === 0;
       document.getElementById("nextBtn").innerText = currentSectionIndex === sections.length - 1 ? "Done" : "Next";
 
-      // 渲染检查项列表（使用双层布局：下置两行 Comments 输入框）
       const container = document.getElementById("checklistContainer");
       const secData = formData[currentSec.id];
 
+      // 核心修改部分：左侧将【名称】和【Comments输入框】放进 item-left-group，实现 Comments 直接移到名称正下方
       container.innerHTML = currentSec.items.map(itemName => {
         const itemVal = secData.items[itemName] || { status: "Satisfactory", comment: "" };
         return `
           <div class="checklist-item">
-            <!-- 上层：检查项名称与下拉选项 -->
-            <div class="item-header">
+            <!-- 左侧：名称 + 挪动过来的 Comments 输入框 -->
+            <div class="item-left-group">
               <span class="item-title">${itemName}</span>
-              <select class="item-select" onchange="updateItemStatus('${currentSec.id}', '${itemName}', this.value)">
-                <option value="Satisfactory" ${itemVal.status === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
-                <option value="Unsatisfactory" ${itemVal.status === 'Unsatisfactory' ? 'selected' : ''}>Unsatisfactory</option>
-                <option value="N/A" ${itemVal.status === 'N/A' ? 'selected' : ''}>N/A</option>
-              </select>
-            </div>
-            <!-- 下层：整行占据、2行高度的 Comments 输入框 -->
-            <div class="item-comment-box">
-              <textarea 
-                class="comment-textarea" 
-                rows="2" 
+              <input 
+                type="text" 
+                class="item-comment-input" 
                 placeholder="Comments"
+                value="${itemVal.comment}"
                 onchange="updateItemComment('${currentSec.id}', '${itemName}', this.value)"
-              >${itemVal.comment}</textarea>
+              />
             </div>
+
+            <!-- 右侧：保持原样的状态选择框 -->
+            <select class="item-select" onchange="updateItemStatus('${currentSec.id}', '${itemName}', this.value)">
+              <option value="Satisfactory" ${itemVal.status === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
+              <option value="Unsatisfactory" ${itemVal.status === 'Unsatisfactory' ? 'selected' : ''}>Unsatisfactory</option>
+              <option value="N/A" ${itemVal.status === 'N/A' ? 'selected' : ''}>N/A</option>
+            </select>
           </div>
         `;
       }).join('');
 
-      // 还原总体备注
       document.getElementById("overallComments").value = secData.overallComments || "";
     }
 
-    // 实时保存输入框与选择框的数据
+    // 状态与输入更新
     function updateItemStatus(sectionId, itemName, value) {
       formData[sectionId].items[itemName].status = value;
     }
@@ -343,23 +343,23 @@
         renderSection();
         window.scrollTo(0, 0);
       } else if (newIndex >= sections.length) {
-        alert("已到达最后一页！可以点击底部‘导出数据’保存检查结果。");
+        alert("所有项目已检查完毕！可点击底部导出保存结果。");
       }
     }
 
-    // 导出结果数据为 JSON 文件
+    // 数据导出
     function exportData() {
       saveCurrentSectionData();
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(formData, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `Inspection_Report_${new Date().toISOString().slice(0,10)}.json`);
+      downloadAnchor.setAttribute("download", `Inspection_${new Date().toISOString().slice(0,10)}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
     }
 
-    // 初始化启动
+    // 运行初始化
     initFormData();
     renderSection();
   </script>
